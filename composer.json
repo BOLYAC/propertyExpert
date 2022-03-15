@@ -1,0 +1,82 @@
+{
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The Laravel Framework.",
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^7.4",
+        "ext-json": "*",
+        "barryvdh/laravel-dompdf": "^0.9.0",
+        "facebook/php-business-sdk": "^12.0",
+        "fideloper/proxy": "^4.4.1",
+        "fruitcake/laravel-cors": "^2.0.3",
+        "guzzlehttp/guzzle": "^7.3.0",
+        "jenssegers/agent": "^2.6",
+        "laravel/framework": "^8.37.0",
+        "laravel/tinker": "^v2.6.1",
+        "livewire/livewire": "^2.4.3",
+        "maatwebsite/excel": "^3.1.30",
+        "marshmallow/laravel-facebook-webhook": "^1.0",
+        "owen-it/laravel-auditing": "^12.0",
+        "realrashid/sweet-alert": "^3.2",
+        "samiaraboglu/alotech-php-api": "^1.5",
+        "socialiteproviders/facebook": "^4.1",
+        "spatie/laravel-backup": "^6.16",
+        "spatie/laravel-google-calendar": "^3.3.1",
+        "spatie/laravel-permission": "^4.0.1",
+        "spatie/laravel-webhook-client": "^2.7",
+        "yajra/laravel-datatables-oracle": "^9.18"
+    },
+    "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.5.5",
+        "facade/ignition": "^2.8.3",
+        "laravel/ui": "^3.2",
+        "mockery/mockery": "^1.4.3",
+        "nunomaduro/collision": "^v5.4.0",
+        "phpunit/phpunit": "^9.5.4"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "files": [
+            "app/helpers.php"
+        ],
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi",
+            "@php artisan vendor:publish --force --tag=livewire:assets --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ]
+    }
+}
