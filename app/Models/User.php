@@ -25,7 +25,8 @@ class User extends Authenticatable implements Auditable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'external_id', 'image_path', 'department_id', 'phone_1', 'phone_2', 'commission_rate', 'departments_ids'
+        'name', 'email', 'password', 'external_id', 'image_path', 'department_id', 'phone_1', 'phone_2', 'commission_rate', 'departments_ids',
+        'can_sse_country', 'can_sse_language', 'can_sse_source', 'can_sse_phone', 'can_sse_email', 'mac_address'
 
     ];
 
@@ -45,7 +46,12 @@ class User extends Authenticatable implements Auditable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'departments_ids' => 'array'
+        'departments_ids' => 'array',
+        'can_sse_country' => 'boolean',
+        'can_sse_language' => 'boolean',
+        'can_sse_source' => 'boolean',
+        'can_sse_phone' => 'boolean',
+        'can_sse_email' => 'boolean'
     ];
 
     public function department()

@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use AloTech\Click2;
 use App\Agency;
 use App\Models\Source;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
@@ -12,7 +13,7 @@ use Livewire\Component;
 class Client extends Component
 {
 
-    public $mode, $client, $updateMode, $sources, $agencies;
+    public $mode, $client, $updateMode, $sources, $agencies, $flags;
 
     public $budget_request_list = [
         ['id' => 1, 'text' => 'Less then 50K'],
@@ -27,6 +28,7 @@ class Client extends Component
         ['id' => 10, 'text' => '1M-2M'],
         ['id' => 11, 'text' => 'More then 2M'],
     ];
+
     public $rooms_request_list = [
         ['id' => 1, 'text' => '0 + 1'],
         ['id' => 2, 'text' => '1 + 1'],
@@ -36,16 +38,18 @@ class Client extends Component
         ['id' => 6, 'text' => '5 + 1'],
         ['id' => 7, 'text' => '6 + 1'],
     ];
+
     public $requirements_request_list = [
         ['id' => 1, 'text' => 'Investments'],
         ['id' => 2, 'text' => 'Life style'],
         ['id' => 3, 'text' => 'Investments + Life style'],
         ['id' => 4, 'text' => 'Citizenship'],
     ];
+
     public $country_edit, $nationality_edit, $lang_edit, $description_edit,
         $status_edit, $lost_reason_edit, $lost_reason_description_edit, $priority_edit, $budget_request_edit, $rooms_request_edit,
         $requirements_request_edit, $source_id_edit, $campaign_name_edit, $agency_id_edit,
-        $appointment_date_edit, $duration_stay_edit = [], $phone_number_edit, $phone_number_2_edit, $full_name_edit;
+        $appointment_date_edit, $duration_stay_edit = [], $phone_number_edit, $phone_number_2_edit, $full_name_edit, $flags_edit;
 
     protected $rules = [
         'status_edit' => 'required',
@@ -72,9 +76,11 @@ class Client extends Component
     {
         $this->mode = 'show';
         $this->sources = Source::all();
+        $this->flags = Tag::select('id', 'name')->get();
         $this->country_edit = $client->country;
         $this->nationality_edit = $client->nationality;
         $this->lang_edit = $client->lang;
+        $this->flags_edit = $client->flags;
         $this->description_edit = $client->description;
         $this->status_edit = $client->status;
         $this->lost_reason_edit = $client->status_new;
@@ -128,7 +134,8 @@ class Client extends Component
             'duration_stay' => $this->duration_stay_edit,
             'client_number' => $this->phone_number_edit,
             'client_number_2' => $this->phone_number_2_edit,
-            'full_name' => $this->full_name_edit
+            'full_name' => $this->full_name_edit,
+            'flags' => $this->flags_edit
         ];
 
         if ($data) {
@@ -213,39 +220,5 @@ class Client extends Component
         } else {
             $this->emit('alert', ['type' => 'danger', 'message' => 'There is something wrong!, Please try again.']);
         }
-    }
-
-    public function makeCall($phone)
-    {
-
-        if ($phone === 'ph1') {
-            $phone = $this->client->client_number;
-        } else {
-            $phone = $this->client->client_number_2;
-        }
-
-        if (session()->has('current_call')) {
-            $this->emit('alert', ['type' => 'danger', 'message' => 'Already in Call']);
-            return;
-        }
-
-        $aloTech = Session::get('alotech');
-        $phoneNumber = $phone;
-        $click2 = new Click2($aloTech);
-
-        $res = $click2->call([
-            'phonenumber' => $phoneNumber,
-            'hangup_url' => 'http://crm.hashim.com.tr/',
-            'masked' => '1'
-        ]);
-
-        Session::put('current_call', $click2);
-        Session::put('client_called_id', $this->client->id);
-
-        $this->emit('alert', ['type' => 'success', 'message' => 'Call started']);
-        $this->dispatchBrowserEvent('radial-status', [
-            'radialStatus' => 'open', 'leadNameRadial' => ($this->client->complete_name ?? $this->client->full_name)
-        ]);
-
     }
 }

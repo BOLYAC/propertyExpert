@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 /*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });*/
@@ -12,7 +13,8 @@ Route::get('/master-details/{id}', 'APIController@getMasterDetailsSingleData')->
 // Report
 Route::get('/report-details', 'APIController@getReportDetailsData')->name('api.report_details');
 Route::get('/report-details/{id}', 'APIController@getReportDetailsSingleData')->name('api.report_single_details');
-
+// Performances
+Route::get('/sales-performance-dates', [\App\Http\Controllers\APIController::class, 'getSalesPerformanceDashboard'])->name('api.sales_performance_dates');
 // Agency
 Route::get('/agency-details/{id}', 'APIController@getAgencyDetailsSingleData')->name('api.agency_single_details');
 

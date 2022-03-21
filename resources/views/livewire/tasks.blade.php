@@ -18,7 +18,22 @@
                                     @foreach($tasks as $task)
                                         <li class="{{ $task->archive === true ? 'completed' : '' }} task">
                                             <div class="task-container">
-                                                <h4 class="task-label">{{ $task->title }} </h4>
+                                                <h4 class="task-label">{{ $task->title }}
+                                                    @php
+                                                        $d = $task->task_priority;
+                                                        switch ($d) {
+                                                        case 1:
+                                                        echo '<span class="badge badge-light-danger ml-2" > ' . __('High') . ' </span > ';
+                                                        break;
+                                                        case 2:
+                                                        echo '<span class="badge badge-light-warning ml-2" > ' . __('Medium') . ' </span > ';
+                                                        break;
+                                                        case 3:
+                                                        echo '<span class="badge badge-light-success ml-2" > ' . __('Low') . ' </span > ';
+                                                        break;
+                                                        };
+                                                    @endphp
+                                                </h4>
                                                 <div class="flex items-center justify-between -mx-2 hover:bg-gray-100">
                                                     <div
                                                         class="flex items-center justify-between w-full">
@@ -93,8 +108,9 @@
                             class="form-control form-control-sm">
                         <option value=""> -- --</option>
                         <option value="1">{{ __('High') }}</option>
-                        <option value="2">{{ __('Low') }}</option>
-                        <option value="3">{{ __('Medium') }}</option>
+                        *
+                        <option value="2">{{ __('Medium') }}</option>
+                        <option value="3">{{ __('Low') }}</option>
                     </select>
                 </div>
                 <div class="form-group">

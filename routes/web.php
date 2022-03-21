@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\CalenderController;
+use App\Http\Controllers\MarketingController;
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
-Route::group(['prefix' => 'clients', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'clients', 'middleware' => ['auth']], function () {
     Route::get('data', 'ClientsController@anyData')->name('clients.data');
     Route::get('newLeadList', 'ClientsController@newLeadList')->name('clients.newLeadList');
     Route::get('importExportView', 'ClientsController@importExportView')->name('importExport');
@@ -43,12 +45,14 @@ Route::group(
         Route::resource('roles', 'RolesController');
         Route::resource('tasks', 'TasksController');
         Route::resource('sources', 'SourcesController');
+        Route::resource('tags', 'TagController');
         Route::resource('documents', 'DocumentController');
         Route::resource('payments', 'PaymentController');
         // Deals
         Route::post('/covert-to-order/{lead}', 'LeadsController@convertToOrder')->name('lead.convert.order');
         Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
-        Route::get('calender', 'CalenderController')->name('calender.index');
+        Route::get('calendar-event', [CalenderController::class, 'index'])->name('calender.index');
+        Route::get('calendar-crud-ajax', [CalenderController::class, 'calendarEvents']);
         Route::post('sales/transfer', 'SalesController@transfer')->name('sales.transfer');
         Route::post('agency-to-deal-step/transfer', 'SalesController@agencyToDealStep')->name('agencyToDealStep.transfer');
         Route::post('agency-to-deal/transfer', 'SalesController@agencyToDeal')->name('agencyToDeal.transfer');
@@ -167,6 +171,11 @@ Route::group(
             return redirect()->back()->with('toast_success', 'Files backup done!');
         })->name('backupFiles');
 
+        // Marketing
+        Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing.index');
+        Route::post('/marketing/import', [MarketingController::class, 'import'])->name('marketing.import');
+        Route::post('/marketing/transfer', [MarketingController::class, 'transferToLeads'])->name('marketing.transfer');
+
         // Audit
         Route::get('audits', 'AuditController@index')->name('audits.list');
 
@@ -174,6 +183,7 @@ Route::group(
         Route::get('select/country', 'HomeController@getCountry')->name('country.name');
         Route::get('select/nationality', 'HomeController@getNationality')->name('nationality.name');
         Route::get('select/language', 'HomeController@getLanguage')->name('language.name');
+        Route::get('select/flags', 'TagController@getFlags')->name('flags.name');
         Route::get('select/agency', 'HomeController@getAgency')->name('agency.name');
         Route::get('select/source', 'HomeController@getSource')->name('source.name');
         // Testing

@@ -181,7 +181,6 @@
                 $('select[name=status_filter]').val('');
                 $('select[name=contact_type_filter]').val('');
                 $('select[name=user_filter]').val('');
-                $('select[name=department_filter]').val('');
                 $('select[name=team_filter]').val('');
                 $('input[type="radio"]').filter('[value=all]').prop('checked', true);
                 $('input[name=daterange]').val('')
@@ -257,7 +256,7 @@
                                     <option value="4">{{ __('WhatsApp Call') }}</option>
                                 </select>
                             </div>
-                            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasPermissionTo('team-manager') || auth()->user()->hasRole('Call center HP'))
+                            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasPermissionTo('team-manager'))
                                 <div class="form-group mb-2">
                                     <select name="user_filter" id="user_filter"
                                             class="custom-select custom-select-sm">
@@ -267,28 +266,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                @if(isset($departments))
-                                    <div class="form-group mb-2">
-                                        <select name="department_filter" id="department_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Department') }}</option>
-                                            @foreach($departments as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-                                @if(isset($teams))
-                                    <div class="form-group mb-2">
-                                        <select name="team_filter" id="team_filter"
-                                                class="custom-select custom-select-sm">
-                                            <option value="">{{ __('Team') }}</option>
-                                            @foreach($teams as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
                             @endif
                             <div class="theme-form mb-2">
                                 <label for="daterange">{{ __('Date') }}</label>

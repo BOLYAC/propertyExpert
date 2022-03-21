@@ -150,21 +150,22 @@
                                 class="setting-round pull-right d-inline-block mt-0"><i
                                     class="fa fa-spin fa-cog"></i></span>
                         </div>
-                        @foreach($all as $audit)
-                            <div class="card-body pt-0">
-                                <div class="timeline-recent">
-                                    <div class="media">
-                                        <div class="timeline-line"></div>
-                                        <div class="timeline-dot-danger"></div>
-                                        <div class="media-body"><span
-                                                class="d-block f-w-600">Natalie reassigned ticket<span
-                                                    class="pull-right light-font f-w-400">2 hour ago</span></span>
-                                            <p><span class="font-danger">Elisse Joson San </span>Francisco, CA</p>
+                        @if($all)
+                            @foreach($all as $audit)
+                                <div class="card-body pt-0">
+                                    <div class="timeline-recent">
+                                        <div class="media">
+                                            <div class="timeline-line"></div>
+                                            <div class="timeline-dot-danger"></div>
+                                            <div class="media-body"><span
+                                                    class="d-block f-w-600">{{ $audit->user->name ?? '' }} {{ $audit->event }}<span
+                                                        class="pull-right light-font f-w-400">{{ optional(\Carbon\Carbon::parse($audit->created_at))->diffForHumans() }}</span></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -212,8 +213,8 @@
             @can('share-client-with')
                 <!-- Start Share lead with card -->
                     <div class="card card-with-border">
-                        <div class="card-header b-b-info p-4">
-                            <h5 class="text-muted">{{ __('Share with') }}</h5>
+                        <div class="card-header bg-primary p-4">
+                            <h5 class="text-white">{{ __('Share with') }}</h5>
                         </div>
                         <div class="card-body p-2">
                             <form action="{{route('client.shareClient')}}" method="POST" id="share_lead_with">
@@ -261,22 +262,7 @@
                         </div>
                     </div>
                 @endcan
-                @if(auth()->id() === $client->user_id || auth()->id() === 1 || auth()->id() === 115)
-                    <div class="card card-with-border">
-                        <div class="card-header b-b-info p-4">
-                            <h5 class="text-muted">{{ __('Convert to agency') }}</h5>
-                        </div>
-                        <div class="card-body">
-                            <form role="form" id="tran-to-agency" action="{{ route('leadToAgency') }}" method="post">
-                                @csrf
-                                <input type="hidden" value="{{$client->id}}" name="clientId">
-                                <button class="btn btn-sm form-control btn-outline-success"
-                                        id="tran-btn">{{ __('Convert') }} <i
-                                        class="icon-arrow-right"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                @endif
+                @include('clients.documents.index')
                 @if($client->leads()->exists())
                     <div class="card card-with-border">
                         <div class="card-header p-4">

@@ -94,7 +94,11 @@ class UsersController extends Controller
         $input = $request->except('_token', 'roles');
         $input['password'] = Hash::make($input['password']);
         $input['external_id'] = Uuid::uuid4()->toString();
-
+        $input['can_sse_country'] = $request->has('can_sse_country') ? 1 : 0;
+        $input['can_sse_language'] = $request->has('can_sse_language') ? 1 : 0;
+        $input['can_sse_source'] = $request->has('can_sse_source') ? 1 : 0;
+        $input['can_sse_phone'] = $request->has('can_sse_phone') ? 1 : 0;
+        $input['can_sse_email'] = $request->has('can_sse_email') ? 1 : 0;
         $user = User::create($input);
         $user->assignRole($request->input('roles'));
 
@@ -182,6 +186,13 @@ class UsersController extends Controller
             // Set user profile image path in database to filePath
             $input['image_path'] = $filePath;
         }
+
+
+        $input['can_sse_country'] = $request->has('can_sse_country') ? 1 : 0;
+        $input['can_sse_language'] = $request->has('can_sse_language') ? 1 : 0;
+        $input['can_sse_source'] = $request->has('can_sse_source') ? 1 : 0;
+        $input['can_sse_phone'] = $request->has('can_sse_phone') ? 1 : 0;
+        $input['can_sse_email'] = $request->has('can_sse_email') ? 1 : 0;
 
         $user->update($input);
 

@@ -4,9 +4,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
-    <title>Hashim Group CRM @yield('title')</title>
+    <link rel="icon" href="{{asset('assets/images/favicon.ico')}}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{asset('assets/images/favicon.ico')}}" type="image/x-icon">
+    <title>Property Experts Tr @yield('title')</title>
     @livewireStyles
     @include('layouts.vertical.css')
     @yield('style')
@@ -48,71 +48,6 @@
         </div>
         <!-- footer start-->
         @include('layouts.compact.footer')
-    </div>
-    <div class="customizer-contain">
-        <div class="customizer-body">
-            @if(Session::has('alotech'))
-                <div class="text-center pr-0 call-content">
-                    <div>
-                        <h6 class="text-center" id="leadNameForDeal"></h6>
-                    </div>
-                    <div class="total-time">
-                        <h5 class="digits text-danger" id="call-timer">00 : 00</h5>
-                    </div>
-                    <div class="container-calls">
-                        <div id="output"></div>
-                        <div class="row justify-content-center">
-                            <div class="digit" id="one">1</div>
-                            <div class="digit" id="two">2</div>
-                            <div class="digit" id="three">3</div>
-                        </div>
-                        <div class="row justify-content-center">
-                            <div class="digit" id="four">4</div>
-                            <div class="digit" id="five">5</div>
-                            <div class="digit" id="six">6</div>
-                        </div>
-                        <div class="row justify-content-center">
-                            <div class="digit" id="seven">7</div>
-                            <div class="digit" id="eight">8</div>
-                            <div class="digit" id="nine">9</div>
-                        </div>
-                        <div class="row justify-content-center">
-                            <div class="digit">*</div>
-                            <div class="digit" id="zero">0</div>
-                            <div class="digit">#</div>
-                        </div>
-                        <div class="botrow">
-                            <div id="click2call">
-                                <i class="fa fa-phone" aria-hidden="true"></i>
-                            </div>
-                            <div id="endCall">
-                                <i class="fa fa-ban" aria-hidden="true"></i>
-                            </div>
-                            <div id="removeNumber">
-                                <i class="fa fa-long-arrow-left dig"
-                                   aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        @livewire('radial-tasks')
-                        @livewire('radial-notes')
-                    </div>
-                </div>
-            @else
-                <div class="m-2 p-2">
-                    <h6>{{  __('AloTech connection') }}</h6>
-                    <form action="{{ route('alotech.login') }}" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label for="login">{{ __('Email') }}</label>
-                            <input type="email" id="login" name="email"
-                                   class="form-control form-control-sm">
-                        </div>
-                        <button class="btn btn-sm btn-primary"
-                                type="submit">{{ __('Login') }}</button>
-                    </form>
-                </div>
-            @endif
-        </div>
     </div>
 </div>
 <div class="modal fade" id="searchModal" tabindex="-1">

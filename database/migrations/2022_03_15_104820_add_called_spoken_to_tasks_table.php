@@ -19,6 +19,7 @@ class AddCalledSpokenToTasksTable extends Migration
             $table->dateTime('next_call')->after('called')->nullable();
             $table->string('snooze')->after('next_call')->nullable();
             $table->string('task_priority')->after('snooze')->nullable();
+            $table->string('task_priority_name')->after('task_priority')->nullable();
         });
     }
 
@@ -31,7 +32,7 @@ class AddCalledSpokenToTasksTable extends Migration
     {
         Schema::table('tasks', function (Blueprint $table) {
             $table->dropColumn([
-                'called', 'next_call', 'snooze', 'task_priority'
+                'called', 'next_call', 'snooze', 'task_priority', 'task_priority_name'
             ]);
         });
     }

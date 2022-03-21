@@ -36,6 +36,8 @@ class Task extends Model implements Auditable
         'agency_id',
         'body',
         'department_id',
+        'task_priority',
+        'task_priority_name'
     ];
 
     /**

@@ -457,7 +457,44 @@ class APIController extends Controller
     {
         Log::debug($request->all());
         $payload = $request->all();
-        return response()->json([ 'data' => $payload, 'status' => \Symfony\Component\HttpFoundation\Response::HTTP_OK]);
+        return response()->json(['data' => $payload, 'status' => \Symfony\Component\HttpFoundation\Response::HTTP_OK]);
+    }
+
+    public function getSalesPerformanceDashboard(Request $request)
+    {
+        if (!empty($request->from_date) && !empty($request->to_date)) {
+            $from = $request->from_date;
+            $to = $request->to_date;
+        } else {
+            $from = now();
+            $to = now();
+        }
+
+        $from = Carbon::parse($from)
+            ->startOfDay()        // 2018-09-29 00:00:00.000000
+            ->toDateTimeString(); // 2018-09-29 00:00:00
+
+        $to = Carbon::parse($to)
+            ->endOfDay()          // 2018-09-29 23:59:59.000000
+            ->toDateTimeString(); // 2018-09-29 23:59:59
+
+
+        $users = User::withCount([
+            'tasks as tasks_made' => function (Builder $query) use ($from, $to) {
+                $query->whereBetween('created_at', [$from, $to]);
+            },
+            'tasks as tasks_done' => function (Builder $query) use ($from, $to) {
+                $query
+                    ->whereBetween('created_at', [$from, $to])
+                    ->where('archive', true);
+            },
+            'notes as notes_made' => function (Builder $query) use ($from, $to) {
+                $query
+                    ->whereBetween('created_at', [$from, $to]);
+            },
+        ])->get();
+
+        return datatables()->of($users)->make(true);
     }
 }
 

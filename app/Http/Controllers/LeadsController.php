@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
-use App\Models\Department;
 use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Project;
@@ -33,8 +32,7 @@ class LeadsController extends Controller
         if (\auth()->user()->hasRole('Admin')) {
             $users = User::all();
             $teams = Team::all();
-            $departments = Department::all();
-            return view('leads.index', compact('users', 'departments', 'teams'));
+            return view('leads.index', compact('users', 'teams'));
         } elseif (\auth()->user()->hasPermissionTo('team-manager')) {
             if (auth()->user()->ownedTeams()->count() > 0) {
                 $users = auth()->user()->currentTeam->allUsers();
@@ -68,9 +66,6 @@ class LeadsController extends Controller
         if ($request->get('user')) {
             $leads->whereIn('user_id', $request->get('user'))
                 ->orWhereIn('sellers', $request->user);
-        }
-        if ($request->get('department')) {
-            $leads->whereIn('department_id', $request->get('department'));
         }
         if ($request->get('team')) {
             $leads->whereIn('team_id', $request->get('team'));

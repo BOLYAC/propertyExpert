@@ -33,8 +33,8 @@
         <h5 class="mr-auto mt-2">{{ __('Lead') }}
             : {{ $client->lead_name ?? $client->client->complete_name ?? '' }}</h5>
 
-            <a class="btn btn-sm btn-primary"
-               href="{{ route('clients.show', $client->client_id) }}">{{ __('Show') }}</a>
+        <a class="btn btn-sm btn-primary"
+           href="{{ route('clients.show', $client->client_id) }}">{{ __('Show') }}</a>
     </div>
     <div class="card-body">
         <div class="row">
@@ -292,12 +292,6 @@
                         <th scope="row">{{ __('Companies name') }}</th>
                         <td>
                             {{ optional($client)->campaigne_name }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">{{ __('Agency') }}</th>
-                        <td>
-                            {{ $client->agency_name ?? '' }}
                         </td>
                     </tr>
                     </tbody>

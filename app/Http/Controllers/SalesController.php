@@ -22,10 +22,6 @@ class SalesController extends Controller
     {
         $client = Client::findOrFail($request->clientId);
 
-        if ($client->agency_id === 0 || $client->agency_id === null || $client->agency_id === '') {
-            return redirect()->back()->with('toast_error', __('This lead don\'t have Agency'));
-        }
-
         if ($client->status === 0 || $client->status === null || $client->status === '') {
             return redirect()->back()->with('toast_error', __('This lead must have a status'));
         }
@@ -127,7 +123,7 @@ class SalesController extends Controller
         $lead['source_name'] = $client->source->name ?? '';
         $lead['source_id'] = $client->source_id ?? '';
         $lead['agency_name'] = $client->agency->name ?? '';
-        $lead['agency_id'] = $client->agency_id ?? null;
+        $lead['lead_flags'] = $client->lead_flags ?? '';
 
         $lead['budget_request'] = $client->budget_request ?? '';
         $lead['rooms_request'] = $client->rooms_request ?? '';
@@ -432,6 +428,4 @@ class SalesController extends Controller
 
         return redirect()->route('agencies.show', compact('agency', 'countries'));
     }
-
-
 }

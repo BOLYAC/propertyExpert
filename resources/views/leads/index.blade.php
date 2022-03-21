@@ -32,8 +32,8 @@
         .select2-results__options {
             font-size: 12px !important;
         }
-        +
 
+        +
         .select2-selection__rendered {
             font-size: 12px;
         }
@@ -87,7 +87,6 @@
                     data: function (d) {
                         d.stage = get_filter('field_stages');
                         d.user = $('select[name=user_filter]').val();
-                        d.department = $('select[name=department_filter]').val();
                         d.country = $('select[name=country_filter]').val();
                         d.team = $('select[name=team_filter]').val();
                     }
@@ -107,7 +106,6 @@
             $('#refresh').click(function () {
                 $('select[name=status_filter]').val('');
                 $('select[name=user_filter]').val('');
-                $('select[name=department_filter]').val('');
                 $('select[name=team_filter]').val('');
                 $(".js-example-placeholder-multiple").empty();
                 table.DataTable().destroy();
@@ -186,30 +184,6 @@
                                            name="status_filter[]" value="9"> {{ __('Lost') }}
                                 </label>
                             </div>
-                            @if(isset($departments))
-                                <div class="form-group mb-2">
-                                    <div class="col-form-label">{{ __('Departments') }}</div>
-                                    <select name="department_filter" id="department_filter"
-                                            class="js-example-placeholder-multiple col-sm-12" multiple>
-                                        <option value="">{{ __('Department') }}</option>
-                                        @foreach($departments as $row)
-                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @endif
-                            @if(isset($teams))
-                                <div class="form-group mb-2">
-                                    <div class="col-form-label">{{ __('Team') }}</div>
-                                    <select name="team_filter" id="team_filter"
-                                            class="js-example-placeholder-multiple col-sm-12" multiple>
-                                        <option value="">{{ __('Team') }}</option>
-                                        @foreach($teams as $row)
-                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @endif
                             @if(isset($users))
                                 <div class="form-group mb-2">
                                     <div class="col-form-label">{{ __('Assigned') }}</div>

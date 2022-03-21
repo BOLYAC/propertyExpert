@@ -112,10 +112,8 @@
                 url: '{!! route('clients.newLeadList') !!}',
                 data: function (d) {
                     d.status = $('select[name=status_filter]').val();
-                    d.status_new = $('select[name=status_new_filter]').val();
                     d.source = $('select[name=source_filter]').val();
                     d.priority = $('select[name=priority_filter]').val();
-                    d.agency = $('select[name=agency_filter]').val();
                     d.country_check = $('#country_check').is(':checked');
                     d.country_type = $('select[name=country_type]').val();
                     d.country = $('input[name=country_field]').val();
@@ -123,8 +121,6 @@
                     d.phone_type = $('select[name=phone_type]').val();
                     d.phone = $('input[name=phone_field]').val();
                     d.user = $('select[name=user_filter]').val();
-                    d.team = $('select[name=team_filter]').val();
-                    d.department = $('select[name=department_filter]').val();
                     d.daysActif = $('#last_active').val();
                     d.lastUpdate = $('#no_tasks').is(':checked');
                     d.daterange = $('input[name=daterange]').val()
@@ -145,17 +141,13 @@
         // Assigne user
         $('#refresh').click(function () {
             $('select[name=status_filter]').val('');
-            $('select[name=status_new_filter]').val('');
             $('select[name=source_filter]').val('');
             $('select[name=priority_filter]').val('');
-            $('select[name=agency_filter]').val('');
             $('#country_check').prop('checked', false);
             $('input[name=country_field]').val('');
             $('#phone_check').prop('checked', false);
             $('input[name=phone_field]').val('');
             $('select[name=user_filter]').val('');
-            $('select[name=team_filter]').val('');
-            $('select[name=department_filter]').val('');
             $('#last_active').val('');
             $('#no_tasks').prop('checked', false);
             $('input[name=daterange]').val('')
@@ -369,30 +361,6 @@
                     </div>
                     <form id="search-form">
                         <div class="card-body filter-cards-view p-2">
-                            @isset($departments)
-                                <div class="form-group mb-2">
-                                    <div class="col-form-label">{{ __('Departments') }}</div>
-                                    <select name="department_filter" id="department_filter"
-                                            class="js-example-placeholder-multiple col-sm-12" multiple>
-                                        <option value="">{{ __('Department') }}</option>
-                                        @foreach($departments as $row)
-                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @endisset
-                            @isset($teams)
-                                <div class="form-group mb-2">
-                                    <div class="col-form-label">{{ __('Team') }}</div>
-                                    <select name="team_filter" id="team_filter"
-                                            class="js-example-placeholder-multiple col-sm-12" multiple>
-                                        <option value="">{{ __('Team') }}</option>
-                                        @foreach($teams as $row)
-                                            <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @endisset
                             @isset($users)
                                 <div class="form-group mb-2">
                                     <div class="col-form-label">{{ __('Assigned') }}</div>
@@ -405,61 +373,41 @@
                                     </select>
                                 </div>
                             @endisset
-                            @if(auth()->user()->current_team_id === 3 || auth()->user()->current_team_id === 17)
-                                <div class="form-group mb-2">
-                                    <div class="col-form-label">{{ __('Status') }}</div>
-                                    <select class="js-example-placeholder-multiple col-sm-12" id="status_filter"
-                                            name="status_filter" multiple="multiple">
-                                        <option value="1">{{ __('New Lead') }}</option>
-                                        <option value="16">{{ __('Unassigned') }}</option>
-                                        <option value="17">{{ __('One Month') }}</option>
-                                        <option value="18">{{ __('2-3 Months') }}</option>
-                                        <option value="19">{{ __('Over 3 Months') }}</option>
-                                        <option value="20">{{ __('In Istanbul') }}</option>
-                                        <option value="21">{{ __('Agent') }}</option>
-                                        <option value="5">{{ __('Sold') }}</option>
-                                        <option value="15">{{ __('Lost') }}</option>
-                                        <option value="22">{{ __('Transferred') }}</option>
-                                        <option value="23">{{ __('No Answering') }}</option>
-                                    </select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <div class="col-form-label">{{ __('Lost reason') }}</div>
-                                    <select class="js-example-placeholder-multiple col-sm-12" id="status_new_filter"
-                                            name="status_new_filter" multiple="multiple">
-                                        <option value="1">{{ __('lost to competition') }}</option>
-                                        <option value="2">{{ __('Applied by mistake') }}</option>
-                                        <option value="3">{{ __('Budget was not enough') }}</option>
-                                        <option value="4">{{ __('Client was looking for something else') }}</option>
-                                        <option value="5">{{ __('Decided not to buy in Turkey') }}</option>
-                                        <option value="6">{{ __('Wrong contact details') }}</option>
-                                        <option value="7">{{ __('Unqualified') }}</option>
-                                        <option value="8">{{ __('Unreachable') }}</option>
-                                        <option value="9">{{ __('Postponed buying idea') }}</option>
-                                        <option value="10">{{ __('Different language') }}</option>
-                                    </select>
-                                </div>
-                            @else
-                                <div class="form-group mb-2">
-                                    <div class="col-form-label">{{ __('Status') }}</div>
-                                    <select class="js-example-placeholder-multiple col-sm-12" id="status_filter"
-                                            name="status_filter" multiple="multiple">
-                                        <option value="1">{{ __('New Lead') }}</option>
-                                        <option value="8">{{ __('No Answer') }}</option>
-                                        <option value="12">{{ __('In progress') }}</option>
-                                        <option value="3">{{ __('Potential appointment') }}</option>
-                                        <option value="4">{{ __('Appointment set') }}</option>
-                                        <option value="10">{{ __('Appointment follow up') }}</option>
-                                        <option value="5">{{ __('Sold') }}</option>
-                                        <option value="13">{{ __('Unreachable') }}</option>
-                                        <option value="7">{{ __('Not interested') }}</option>
-                                        <option value="11">{{ __('Low budget') }}</option>
-                                        <option value="9">{{ __('Wrong Number') }}</option>
-                                        <option value="14">{{ __('Unqualified') }}</option>
-                                        <option value="15">{{ __('Lost') }}</option>
-                                    </select>
-                                </div>
-                            @endif
+                            <div class="form-group mb-2">
+                                <div class="col-form-label">{{ __('Status') }}</div>
+                                <select class="js-example-placeholder-multiple col-sm-12" id="status_filter"
+                                        name="status_filter" multiple="multiple">
+                                    <option value="1">{{ __('New Lead') }}</option>
+                                    <option value="8">{{ __('No Answer') }}</option>
+                                    <option value="12">{{ __('In progress') }}</option>
+                                    <option value="3">{{ __('Potential appointment') }}</option>
+                                    <option value="4">{{ __('Appointment set') }}</option>
+                                    <option value="10">{{ __('Appointment follow up') }}</option>
+                                    <option value="5">{{ __('Sold') }}</option>
+                                    <option value="13">{{ __('Unreachable') }}</option>
+                                    <option value="7">{{ __('Not interested') }}</option>
+                                    <option value="11">{{ __('Low budget') }}</option>
+                                    <option value="9">{{ __('Wrong Number') }}</option>
+                                    <option value="14">{{ __('Unqualified') }}</option>
+                                    <option value="15">{{ __('Lost') }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-2">
+                                <div class="col-form-label">{{ __('Lost reason') }}</div>
+                                <select class="js-example-placeholder-multiple col-sm-12" id="status_new_filter"
+                                        name="status_new_filter" multiple="multiple">
+                                    <option value="1">{{ __('lost to competition') }}</option>
+                                    <option value="2">{{ __('Applied by mistake') }}</option>
+                                    <option value="3">{{ __('Budget was not enough') }}</option>
+                                    <option value="4">{{ __('Client was looking for something else') }}</option>
+                                    <option value="5">{{ __('Decided not to buy in Turkey') }}</option>
+                                    <option value="6">{{ __('Wrong contact details') }}</option>
+                                    <option value="7">{{ __('Unqualified') }}</option>
+                                    <option value="8">{{ __('Unreachable') }}</option>
+                                    <option value="9">{{ __('Postponed buying idea') }}</option>
+                                    <option value="10">{{ __('Different language') }}</option>
+                                </select>
+                            </div>
                             <div class="form-group mb-2">
                                 <div>{{ __('Source') }}</div>
                                 <select class="js-example-placeholder-multiple col-sm-12" id="source_filter"
@@ -470,16 +418,7 @@
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <div>{{ __('Agency') }}</div>
-                                <select class="js-example-placeholder-multiple col-sm-12" id="agency_filter"
-                                        name="agency_filter" multiple>
-                                    @foreach($agencies as $row)
-                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group mb-2">
-                                <div>{{ auth()->user()->department_id <> 1 ? __('Priority') : __('Qualification') }}</div>
+                                <div>{{ __('Priority')  }}</div>
                                 <select class="js-example-placeholder-multiple col-sm-12" id="priority_filter"
                                         name="priority_filter" multiple>
                                     <option value="1">{{ __('Low') }}</option>

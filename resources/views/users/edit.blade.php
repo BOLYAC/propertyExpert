@@ -22,44 +22,48 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-8 mx-auto">
-                <!-- Zero config.table start -->
-                @include('partials.flash-message')
-                <div class="card">
-                    <form action="{{ route('users.update', $user) }}" method="post"
-                          enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
+        @include('partials.flash-message')
+        <form action="{{ route('users.update', $user) }}" method="post"
+              enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <div class="row">
+                <div class="col-sm-8">
+                    <!-- Zero config.table start -->
+                    <div class="card">
                         <div class="card-body b-t-primary">
-                            <div class="form-group">
-                                <label for="name">{{ __('Name') }}</label>
-                                <input class="form-control" type="text" name="name" id="name"
-                                       value="{{ old('name', $user->name) }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">{{__('Email')}}</label>
-                                <input class="form-control" type="email" name="email" id="email"
-                                       value="{{ old('email', $user->email) }}">
+                            <div class="row">
+                                <div class="form-group col">
+                                    <label for="name">{{ __('Name') }}</label>
+                                    <input class="form-control" type="text" name="name" id="name"
+                                           value="{{ old('name', $user->name) }}">
+                                </div>
+                                <div class="form-group col">
+                                    <label for="email">{{__('Email')}}</label>
+                                    <input class="form-control" type="email" name="email" id="email"
+                                           value="{{ old('email', $user->email) }}">
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="password">{{ __('Password') }}</label>
                                 <input class="form-control" type="password" name="password" id="password">
                             </div>
-                            <div class="form-group input-group-sm">
-                                <label for="password">{{ __('Phone') }}</label>
-                                <input class="form-control" type="text" name="phone_1" id="phone_1"
-                                       value="{{ $user->phone_1 ?? '' }}">
+                            <div class="row">
+                                <div class="form-group input-group-sm col">
+                                    <label for="password">{{ __('Phone') }}</label>
+                                    <input class="form-control" type="text" name="phone_1" id="phone_1"
+                                           value="{{ $user->phone_1 ?? '' }}">
+                                </div>
+                                <div class="form-group input-group-sm col">
+                                    <label for="password">{{ __('Phone 2') }}</label>
+                                    <input class="form-control" type="text" name="phone_2" id="phone_2"
+                                           value="{{ $user->phone_2 ?? '' }}">
+                                </div>
                             </div>
                             <div class="form-group input-group-sm">
-                                <label for="password">{{ __('Phone 2') }}</label>
-                                <input class="form-control" type="text" name="phone_2" id="phone_2"
-                                       value="{{ $user->phone_2 ?? '' }}">
-                            </div>
-                            <div class="form-group input-group-sm">
-                                <label for="commission_rate">{{ __('Commission rate') }}</label>
-                                <input class="form-control" type="text" name="commission_rate" id="commission_rate"
-                                       value="{{ $user->commission_rate }}">
+                                <label for="commission_rate">{{ __('Mac address') }}</label>
+                                <input class="form-control" type="text" name="mac_address" id="mac_address"
+                                       value="{{ $user->mac_address }}">
                             </div>
                             <div class="form-group">
                                 <label for="roles">{{ __('Role') }}</label>
@@ -115,12 +119,48 @@
                                 {{__('Cancel')}}
                             </a>
                         </div>
-                    </form>
-
+                    </div>
+                </div>
+                <!-- Zero config.table end -->
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="col-sm-12">
+                                <h5>Simple permission</h5>
+                            </div>
+                            <div class="col">
+                                <div class="form-group m-t-15">
+                                    <div class="checkbox checkbox-primary">
+                                        <input id="can_sse_country" type="checkbox"
+                                               name="can_sse_country" {{ $user->can_sse_country == 1 ? 'checked' : '' }}>
+                                        <label for="can_sse_country">{{ __('Can see country') }}</label>
+                                    </div>
+                                    <div class="checkbox checkbox-primary">
+                                        <input id="can_sse_language" type="checkbox"
+                                               name="can_sse_language" {{ $user->can_sse_language == 1 ? 'checked' : '' }}>
+                                        <label for="can_sse_language">{{ __('Can see language') }}</label>
+                                    </div>
+                                    <div class="checkbox checkbox-primary">
+                                        <input id="can_sse_source" type="checkbox"
+                                               name="can_sse_source" {{ $user->can_sse_source == 1 ? 'checked' : '' }}>
+                                        <label for="can_sse_source">{{ __('Can see source') }}</label>
+                                    </div>
+                                    <div class="checkbox checkbox-primary">
+                                        <input id="can_sse_phone" type="checkbox"
+                                               name="can_sse_phone" {{ $user->can_sse_phone == 1 ? 'checked' : '' }}>
+                                        <label for="can_sse_phone">{{ __('Can see phone') }}</label>
+                                    </div>
+                                    <div class="checkbox checkbox-primary">
+                                        <input id="can_sse_email" type="checkbox"
+                                               name="can_sse_email" {{ $user->can_sse_email == 1 ? 'checked' : '' }}>
+                                        <label for="can_sse_email">{{ __('Can see email') }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- Zero config.table end -->
-        </div>
+        </form>
     </div>
-
 @endsection

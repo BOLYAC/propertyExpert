@@ -3,10 +3,8 @@
 
 @section('style_after')
     <!-- Calender css -->
-        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/fullcalendar.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/fullcalendar.print.min.css') }}" media='print'>
-    <!-- Plugins css start-->
-{{--    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/calendar.css') }}">--}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
 @endsection
 
 @section('style')
@@ -15,52 +13,54 @@
 
 @section('script_after')
     <!-- Plugins JS start-->
-        <script src="{{ asset('assets/js/calendar/moment.min.js') }}"></script>
-        <script src="{{ asset('assets/js/calendar/fullcalendar.min.js') }}"></script>
-{{--    <script src="{{ asset('assets/js/calendar/tui-code-snippet.min.js') }}"></script>--}}
-{{--    <script src="{{ asset('assets/js/calendar/tui-time-picker.min.js') }}"></script>--}}
-{{--    <script src="{{ asset('assets/js/calendar/tui-date-picker.min.js') }}"></script>--}}
-{{--    <script src="{{ asset('assets/js/calendar/moment.min.js') }}"></script>--}}
-{{--    <script src="{{ asset('assets/js/calendar/chance.min.js') }}"></script>--}}
-{{--    <script src="{{ asset('assets/js/calendar/tui-calendar.js') }}"></script>--}}
-{{--    <script src="{{ asset('assets/js/calendar/calendars.js') }}"></script>--}}
-{{--    <script src="{{ asset('assets/js/calendar/schedules.js') }}"></script>--}}
-{{--    <script src="{{ asset('assets/js/calendar/app.js') }}"></script>--}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script>
         $(document).ready(function () {
+            var SITEURL = "{{ url('/') }}";
             // page is now ready, initialize the calendar...
-            $('#calendar').fullCalendar({
+            $('#full_calendar_events').fullCalendar({
                 // put your options and callbacks here
-                minTime: "06:00:00",
-                maxTime: "22:00:00",
-                defaultView: $(window).width() < 765 ? 'basicDay' : 'agendaWeek',
+                editable: true,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                selectable: true,
+                selectHelper: true,
                 events: [
                         @foreach($events as $event)
                     {
-                        title: '{{ $event->lead_name  ?? $event->name ?? ''}}',
-                        url: '{{ route('events.show', $event->id) }}',
+                        id: '{{ $event->id }}',
+                        title: '{{ $event->lead_name ?? $event->name ?? ''}}',
                         start: '{{ $event->event_date }}',
                         color: '{{ $event->color }}'
                     },
                     @endforeach
                 ],
-                dayClick: function(date, allDay, jsEvent, view) {
-                    let eventsCount = 0;
-                    let date1 = date.format('YYYY-MM-DD');
-                    $('#calendar').fullCalendar('clientEvents', function(event) {
-                        let start = moment(event.start).format("YYYY-MM-DD");
-                        let end = moment(event.end).format("YYYY-MM-DD");
-                        if(date1 == start)
-                        {
-                            eventsCount++;
+                eventClick: function (event) {
+                    $.ajax({
+                        type: "GET",
+                        url: SITEURL + '/calendar-crud-ajax',
+                        data: {
+                            id: event.id,
+                            type: 'show'
+                        },
+                        success: function (response) {
+                            $('#event-detail').html(response);
+                            displayMessage('Appointment found');
                         }
                     });
-                    alert(eventsCount);
                 }
             })
-        })
+        });
 
+        function displayMessage(message) {
+            toastr.success(message, 'Event');
+        }
     </script>
 
 @endsection
@@ -75,15 +75,22 @@
 @endsection
 @section('content')
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card box-shadow-title">
-                    <div class="card-header">
-                        <h5>{{ __('Calender') }} </h5>
-                    </div>
-                    <div class="d-flex">
-                        <div id="right">
-                            <div id="calendar"></div>
+        <div class="calendar-wrap">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Calender</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-xl-6 xl-40 col-lg-12 col-md-5 box-col-4">
+                                    <div id='full_calendar_events'></div>
+                                </div>
+                                <div class="col-xl-6 xl-60 col-lg-12 col-md-7 box-col-8" id="event-detail">
+
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

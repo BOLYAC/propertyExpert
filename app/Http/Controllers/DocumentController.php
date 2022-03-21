@@ -26,7 +26,6 @@ class DocumentController extends Controller
         }
 
         $modelsMapping = [
-            'agency' => 'App\Agency',
             'client' => 'App\Models\Client'
         ];
 
@@ -45,7 +44,8 @@ class DocumentController extends Controller
                 'user_id' => auth()->user()->id,
                 'created_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'full' => $imagePath
+                'full' => $imagePath,
+                'client_id' => $request->get('client_id')
             ]
         );
 

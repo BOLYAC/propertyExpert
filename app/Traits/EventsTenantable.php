@@ -45,62 +45,6 @@ trait EventsTenantable
                     });
                 }
             }
-
-
-            if (auth()->user()->hasPermissionTo('desk-manager')) {
-                $teams = Team::whereIn('id', ['4', '7', '15'])->get();
-                foreach ($teams as $u) {
-                    foreach ($u->users as $ut) {
-                        $users[] = $ut->id;
-                    }
-                }
-                static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
-                    $builder->whereIn('user_id', $users)
-                        ->orWhereJsonContains('sellers', $users);
-                });
-            }
-
-            if (auth()->user()->hasPermissionTo('multiple-department')) {
-                $teams = Team::whereIn('id', ['5', '4', '7', '15'])->get();
-                $users[] = User::whereIn('id', ['5', '15'])->pluck('id');
-                foreach ($teams as $u) {
-                    foreach ($u->users as $ut) {
-                        $users[] .= $ut->id;
-                    }
-                }
-                static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
-                    $builder->whereIn('user_id', $users);
-                });
-            }
-
-            if (auth()->user()->hasPermissionTo('desk-user')) {
-                $teams = Team::whereIn('id', ['4', '7', '15'])->get();
-                $users[] = User::where('id', '=', '5')->pluck('id');
-                foreach ($teams as $u) {
-                    foreach ($u->users as $ut) {
-                        $users[] .= $ut->id;
-                    }
-                }
-                static::addGlobalScope('user_id', function (Builder $builder) use ($users) {
-                    $builder->whereIn('user_id', $users);
-                });
-            }
-
-            if (auth()->user()->hasRole('Call center HP')) {
-                $users = [];
-                $teams = Team::whereIn('id', ['3', '4', '17'])->get();
-                $users[] = auth()->id();
-                foreach ($teams as $u) {
-                    foreach ($u->users as $ut) {
-                        $users[] = $ut->id;
-                    }
-                }
-                static::addGlobalScope('user_id', function (Builder $builder) use ($users, $l) {
-                    $builder->whereIn('user_id', $users)
-                        ->orWhereJsonContains('sellers', $l);
-                });
-            }
-
         }
     }
 }

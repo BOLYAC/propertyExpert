@@ -11,6 +11,7 @@ use App\Models\Client;
 use App\Models\Department;
 use App\Models\Lead;
 use App\Models\Source;
+use App\Models\Tag;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
@@ -402,7 +403,8 @@ class ClientsController extends Controller
         $users = User::all();
         $sources = Source::where('for_company', false)->get();
         $agencies = Agency::all();
-        return view('clients.create', compact('users', 'sources', 'agencies'));
+        $flags = Tag::all();
+        return view('clients.create', compact('users', 'sources', 'agencies', 'flags'));
     }
 
     /**
@@ -416,7 +418,7 @@ class ClientsController extends Controller
 
         $request->validate([
             'source' => 'required',
-            'agency' => 'required',
+            'status' => 'required',
             'client_email' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email,deleted_at', 'unique:clients,client_email_2,' . $request->input('client_email_2') . ',deleted_at'],
             'client_email_2' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email_2,deleted_at', 'unique:clients,client_email,' . $request->input('client_email') . ',deleted_at'],
             'client_number' => ['nullable', 'string', 'max:255', 'unique:clients,client_number,deleted_at', 'unique:clients,client_number_2,' . $request->input('client_number_2') . ',deleted_at'],
@@ -437,12 +439,10 @@ class ClientsController extends Controller
             'nationality' => $request->nationality,
             'budget' => $request->budget,
             'rooms' => $request->rooms,
-            'appointment_date' => $request->appointment_date ?? now(),
             'type' => $request->has('type') ? 1 : 0,
             'status' => $request->status,
             'requirements' => $request->requirements,
             'priority' => $request->priority,
-            'agency_id' => $request->agency,
             'lang' => $request->lang,
             'source_id' => $request->source,
             'user_id' => Auth::id(),
@@ -468,7 +468,9 @@ class ClientsController extends Controller
     {
         $users = User::all();
         $all = $client->audits()->with('user')->get();
-        return view('clients.show', compact('client', 'users', 'all'));
+        $clientDocuments = $client->documents()->get();
+
+        return view('clients.show', compact('client', 'users', 'all', 'clientDocuments'));
     }
 
     /**
@@ -481,11 +483,11 @@ class ClientsController extends Controller
     {
         $users = User::all();
         $sources = Source::where('for_company', false)->get();
-        $agencies = Agency::all();
+        $flags = Tag::all();
         $clientDocuments = $client->documents()->get();
         $previous_record = Client::where('id', '<', $client->id)->orderBy('id', 'desc')->first();
         $next_record = Client::where('id', '>', $client->id)->orderBy('id')->first();
-        return view('clients.edit', compact('client', 'users', 'sources', 'agencies', 'clientDocuments', 'next_record', 'previous_record'));
+        return view('clients.edit', compact('client', 'users', 'sources', 'flags', 'clientDocuments', 'next_record', 'previous_record'));
     }
 
     /**
@@ -499,7 +501,6 @@ class ClientsController extends Controller
     {
         $request->validate([
             'source_id' => 'required',
-            'agency_id' => 'required',
             'client_email' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email,' . $client->id . ',id,deleted_at,NULL'],
             'client_email_2' => ['nullable', 'string', 'email', 'max:255', 'unique:clients,client_email_2,' . $client->id . ',id,deleted_at,NULL'],
             'client_number' => ['nullable', 'string', 'max:255', 'unique:clients,client_number,' . $client->id . ',id,deleted_at,NULL'],
@@ -1170,14 +1171,16 @@ class ClientsController extends Controller
                 $priority = '';
                 $status = '';
                 $status_new = '';
-                if (is_null($clients->country)) {
-                    $country = '<span class="badge badge-pill badge-primary">' . $clients->getRawOriginal('country') ?? '' . '</span>';
-                } else {
-                    $countries = collect($clients->country)->toArray();
-                    foreach ($countries as $name) {
-                        $country .= '<span class="badge badge-pill badge-primary">' . $name . '</span>';
+                if (\auth()->user()->can_sse_country == true) {
+                    if (is_null($clients->country)) {
+                        $country = '<span class="badge badge-pill badge-primary">' . $clients->getRawOriginal('country') ?? '' . '</span>';
+                    } else {
+                        $countries = collect($clients->country)->toArray();
+                        foreach ($countries as $name) {
+                            $country .= '<span class="badge badge-pill badge-primary">' . $name . '</span>';
+                        }
+                        $country;
                     }
-                    $country;
                 }
                 $i = $clients->status;
                 switch ($i) {

@@ -27,15 +27,6 @@
                             </a>
                         </li>
                     @endcan
-                    @can('invoice-list')
-                        <li class="dropdown">
-                            <a href="{{ route('invoices.index') }}"
-                               class="nav-link menu-title {{ Route::currentRouteName() === 'invoices.index' ? 'active' : '' }}">
-                                <i data-feather="file-text"></i>
-                                <span> {{ __('Invoices') }}</span>
-                            </a>
-                        </li>
-                    @endcan
                     @can('task-list')
                         <li class="dropdown">
                             <a href="{{ route('tasks.index') }}"
@@ -63,37 +54,30 @@
                             </a>
                         </li>
                     @endcan
-                    @can('company-list')
+                    @can('marketing-list')
                         <li class="dropdown">
-                            <a href="{{ route('companies.index') }}"
-                               class="nav-link menu-title {{ Route::currentRouteName() === 'companies.index' ? 'active' : '' }}">
-                                <i data-feather="home"></i>
-                                <span> {{ __('Companies') }}</span>
+                            <a href="{{ route('marketing.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'marketing.index' ? 'active' : '' }}">
+                                <i data-feather="calendar"></i>
+                                <span> {{ __('Marketing') }}</span>
                             </a>
                         </li>
                     @endcan
-                    @if(auth()->id() === 95 || auth()->id() === 116 || auth()->user()->hasRole('Admin') || auth()->id() === 8)
-                        <li class="dropdown">
-                            <a href="{{ route('agencies.index') }}"
-                               class="nav-link menu-title {{ Route::currentRouteName() === 'agencies.index' ? 'active' : '' }}">
-                                <i data-feather="triangle"></i>
-                                <span> {{ __('Agencies') }}</span>
-                            </a>
-                        </li>
-                    @endcan
-                    <li class="dropdown">
-                        <a href="{{ route('projects.index') }}"
-                           class="nav-link menu-title {{ Route::currentRouteName() === 'projects.index' ? 'active' : '' }}">
-                            <i data-feather="home"></i>
-                            <span> {{ __('Projects') }}</span>
-                        </a>
-                    </li>
                     @can('source-list')
                         <li class="dropdown">
                             <a href="{{ route('sources.index') }}"
                                class="nav-link menu-title {{ Route::currentRouteName() === 'sources.index' ? 'active' : '' }}">
                                 <i data-feather="target"></i>
                                 <span> {{ __('Sources') }}</span>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('tags-list')
+                        <li class="dropdown">
+                            <a href="{{ route('tags.index') }}"
+                               class="nav-link menu-title {{ Route::currentRouteName() === 'tags.index' ? 'active' : '' }}">
+                                <i data-feather="tag"></i>
+                                <span> {{ __('Tags') }}</span>
                             </a>
                         </li>
                     @endcan
@@ -138,13 +122,6 @@
                         @endif
                     @endcan
 
-                    <li class="dropdown">
-                        <a href="{{ route('contact.index') }}"
-                           class="nav-link menu-title {{ Route::currentRouteName() === 'contact.index' ? 'active' : '' }}">
-                            <i data-feather="compass"></i>
-                            <span> {{ __('Contacts') }}</span>
-                        </a>
-                    </li>
                     @can('user-list')
                         <li class="dropdown">
                             <a href="{{ route('users.index') }}"
@@ -160,15 +137,6 @@
                                class="nav-link menu-title {{ Route::currentRouteName() === 'teams.index' ? 'active' : '' }}">
                                 <i data-feather="link"></i>
                                 <span> {{ __('Teams') }}</span>
-                            </a>
-                        </li>
-                    @endcan
-                    @can('department-list')
-                        <li class="dropdown">
-                            <a href="{{ route('departments.index') }}"
-                               class="nav-link menu-title {{ Route::currentRouteName() === 'departments.index' ? 'active' : '' }}">
-                                <i data-feather="smartphone"></i>
-                                <span> {{ __('Departments') }}</span>
                             </a>
                         </li>
                     @endcan

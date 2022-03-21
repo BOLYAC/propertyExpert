@@ -21,15 +21,13 @@
                             </div>
                             <div class="form-group">
                                 <label for="">{{ __('Phone number Format (+90xxxxxxxxx)') }}</label>
-                                <input type="text" class="form-control form-control-sm"
-                                       pattern="[+ 0-9]{12}"
+                                <input type="tel" class="form-control form-control-sm"
                                        wire:model="phone_number_edit"
                                        value="{{ $phone_number_edit }}">
                             </div>
                             <div class="form-group">
                                 <label for="">{{ __('Phone number 2 Format (+90xxxxxxxxx)') }}</label>
-                                <input type="text" class="form-control form-control-sm"
-                                       pattern="[+ 0-9]{12}"
+                                <input type="tel" class="form-control form-control-sm"
                                        wire:model="phone_number_2_edit"
                                        value="{{ $client->phone_number_2_edit }}">
                             </div>
@@ -37,64 +35,62 @@
                             @if(is_null($phone_number_edit))
                                 <div class="form-group">
                                     <label for="">{{ __('Phone number Format (+90xxxxxxxxx)') }}</label>
-                                    <input type="text" class="form-control form-control-sm"
-                                           pattern="[+ 0-9]{12}"
+                                    <input type="tel" class="form-control form-control-sm"
                                            wire:model="phone_number_edit"
                                            value="{{ $phone_number_edit }}">
                                 </div>
-{{--                                <input type="text" wire:model="bank_account" wire:change="formatBankAccount"  wire:keyup="formatBankAccount"><br />--}}
-{{--                                @error('bank_account') <span class="text-red-500">{{ $message }}</span>@enderror--}}
                             @endif
                             @if(is_null($client->phone_number_2_edit))
                                 <div class="form-group">
                                     <label for="">{{ __('Phone number 2 Format (+90xxxxxxxxx)') }}</label>
-                                    <input type="text" class="form-control form-control-sm"
-                                           pattern="[+ 0-9]{12}"
+                                    <input type="tel" class="form-control form-control-sm"
                                            wire:model="phone_number_2_edit"
                                            value="{{ $client->phone_number_2_edit }}">
                                 </div>
                             @endif
                         @endif
-                        <div class="form-group input-group-sm" wire:ignore>
-                            <label for="country">{{ __('Country') }}</label>
-                            <select class="js-country-all custom-select custom-select-sm"
-                                    id="country" multiple wire:model="country_edit">
-                                @php $clientCountry = collect($country_edit)->toArray() @endphp
-                                @foreach($clientCountry as $lang)
-                                    <option value="{{ $lang }}" selected>
-                                        {{ $lang }}</option>
-                                @endforeach
-                            </select>
-                            <script>
-                                $('.js-country-all').select2({
-                                    theme: 'classic',
-                                    ajax: {
-                                        url: "{{ route('country.name') }}",
-                                        dataType: 'json',
-                                        delay: 250,
-                                        processResults: function (data) {
-                                            return {
-                                                results: $.map(data, function (item) {
-                                                    return {
-                                                        text: item.name,
-                                                        id: item.name
-                                                    }
-                                                })
-                                            };
-                                        },
-                                        cache: true
-                                    }
-                                });
-                                $('.js-country-all').on('change', function (e) {
-                                    var data = $('.js-country-all').select2("val");
-                                @this.set('country_edit', data);
-                                });
-                            </script>
-                            @if(is_null($client->country))
-                                <div class="col-form-label">
-                                    Old: {{ $client->getRawOriginal('country') ?? '' }}</div>
-                            @endif
-                        </div>
+                        @if(auth()->user()->can_sse_country)
+                            <div class="form-group input-group-sm" wire:ignore>
+                                <label for="country">{{ __('Country') }}</label>
+                                <select class="js-country-all custom-select custom-select-sm"
+                                        id="country" multiple wire:model="country_edit">
+                                    @php $clientCountry = collect($country_edit)->toArray() @endphp
+                                    @foreach($clientCountry as $lang)
+                                        <option value="{{ $lang }}" selected>
+                                            {{ $lang }}</option>
+                                    @endforeach
+                                </select>
+                                <script>
+                                    $('.js-country-all').select2({
+                                        theme: 'classic',
+                                        ajax: {
+                                            url: "{{ route('country.name') }}",
+                                            dataType: 'json',
+                                            delay: 250,
+                                            processResults: function (data) {
+                                                return {
+                                                    results: $.map(data, function (item) {
+                                                        return {
+                                                            text: item.name,
+                                                            id: item.name
+                                                        }
+                                                    })
+                                                };
+                                            },
+                                            cache: true
+                                        }
+                                    });
+                                    $('.js-country-all').on('change', function (e) {
+                                        var data = $('.js-country-all').select2("val");
+                                    @this.set('country_edit', data);
+                                    });
+                                </script>
+                                @if(is_null($client->country))
+                                    <div class="col-form-label">
+                                        Old: {{ $client->getRawOriginal('country') ?? '' }}</div>
+                                @endif
+                            </div>
+                        @endif
                         <div class="form-group input-group-sm" wire:ignore>
                             <label for="nationality">{{ __('Nationality') }}</label>
                             <select
@@ -132,10 +128,6 @@
                                         {{ $nat }}</option>
                                 @endforeach
                             </select>
-                            @if(is_null($client->country))
-                                <div class="col-form-label">
-                                    Old: {{ $client->getRawOriginal('nationality') ?? '' }}</div>
-                            @endif
                         </div>
                         <div class="form-group input-group-sm" wire:ignore>
                             <label for="lang">{{ __('Languages') }}</label>
@@ -436,162 +428,56 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="source">{{ __('Source') }}</label>
-                            <select wire:model="source_id_edit" id="source"
-                                    class="custom-select custom-select-sm @error('source_id') form-control-danger @enderror">
-                                <option selected disabled> {{ __('-- Select source --') }}
-                                </option>
-                                @foreach($sources as $source)
-                                    <option value="{{ $source->id }}"
-                                        {{ $client->source_id == $source->id ? 'selected' : '' }}>
-                                        {{ $source->name }}</option>
+                        <div class="form-group input-group-sm" wire:ignore>
+                            <label for="lang">{{ __('Flags') }}</label>
+                            <select class="js-flags-all custom-select custom-select-sm"
+                                    multiple="multiple" wire:model="flags_edit" id="flags">
+                                <script>
+                                    $('.js-flags-all').select2({
+                                        theme: 'classic',
+                                    })
+                                    $('.js-flags-all').on('change', function (e) {
+                                        let data = $('.js-flags-all').select2("val");
+                                    @this.set('flags_edit', data);
+                                    });
+                                </script>
+                                @php $clientFlags = collect($flags_edit)->toArray() @endphp
+                                @foreach($flags as $flag)
+                                    @if( in_array($client->flags, $clientFlags))
+                                        <option value="{{ $flag->id }}"
+                                                selected>{{ $flag->name }}</option>
+                                    @else
+                                        <option value="{{ $flag->id }}">{{ $flag->name }}</option>
+                                    @endif
                                 @endforeach
                             </select>
-                            @error('source_id')
-                            <span class="invalid-feedback" role="alert">
+                        </div>
+                        @if(auth()->user()->can_sse_source)
+                            <div class="form-group">
+                                <label for="source">{{ __('Source') }}</label>
+                                <select wire:model="source_id_edit" id="source"
+                                        class="custom-select custom-select-sm @error('source_id') form-control-danger @enderror">
+                                    <option selected disabled> {{ __('-- Select source --') }}
+                                    </option>
+                                    @foreach($sources as $source)
+                                        <option value="{{ $source->id }}"
+                                            {{ $client->source_id == $source->id ? 'selected' : '' }}>
+                                            {{ $source->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('source_id')
+                                <span class="invalid-feedback" role="alert">
                                                         <strong class="text-danger">{{ $message }}</strong>
                                                     </span>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
+                        @endif
                         <div class="row">
                             <div class="form-group col-md-12 col-lg-6">
                                 <label for="">{{ __('Campaign name') }}</label>
                                 <input type="text" class="form-control form-control-sm"
                                        wire:model="campaign_name_edit"
                                        value="{{ $client->campaigne_name }}">
-                            </div>
-
-                            <div class="form-group col-md-12 col-lg-6">
-                                <label for="source">{{ __('Agency') }}</label>
-                                <select wire:model="agency_id_edit" id="agency"
-                                        class="custom-select custom-select-sm @error('agency_id') form-control-danger @enderror js-agency-all">
-                                    <option value="{{ $client->agency_id_edit }}">
-                                        {{ $client->agency->name }}
-                                    </option>
-                                </select>
-                                <script>
-                                    $('.js-agency-all').select2({
-                                        ajax: {
-                                            url: "{{ route('agency.name') }}",
-                                            dataType: 'json',
-                                            delay: 250,
-                                            processResults: function (data) {
-                                                return {
-                                                    results: $.map(data, function (item) {
-                                                        return {
-                                                            text: item.name,
-                                                            id: item.id
-                                                        }
-                                                    })
-                                                };
-                                            },
-                                            cache: true
-                                        }
-                                    });
-                                    $('.js-country-all').on('change', function (e) {
-                                        var data = $('.js-country-all').select2("val");
-                                    @this.set('country_edit', data);
-                                    });
-                                </script>
-                                @error('agency_id_edit')
-                                <span class="invalid-feedback" role="alert">
-                                                            <strong class="text-danger">{{ $message }}</strong>
-                                                        </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md">
-                                <label for="appointment_date">{{ __('Date of coming') }}</label>
-                                <input wire:model="appointment_date_edit" id="appointment_date"
-                                       class="form-control form-control-sm"
-                                       value="{{ old('appointment_date', optional($client->appointment_date)->format('Y-m-d') ) }}"
-                                       type="date"/>
-                            </div>
-                            <div class="form-group col-md">
-                                <label for="duration_stay">{{ __('Duration of Stay')}}</label>
-                                <select wire:model="duration_stay_edit" id="duration_stay"
-                                        class="form-control form-control-sm">
-                                    <option value=""
-                                            selected>{{ __('-- Select duration of Stay --') }}</option>
-                                    <option
-                                        value="1" {{ old('duration_stay', $client->duration_stay) == 1 ? 'selected' : '' }}>
-                                        {{ __('1 Day') }}
-                                    </option>
-                                    <option
-                                        value="2" {{ old('duration_stay', $client->duration_stay) == 2 ? 'selected' : '' }}>
-                                        {{ __('2 Days') }}
-                                    </option>
-                                    <option
-                                        value="3" {{ old('duration_stay', $client->duration_stay) == 3 ? 'selected' : '' }}>
-                                        {{ __('3 Days') }}
-                                    </option>
-                                    <option
-                                        value="4" {{ old('duration_stay', $client->duration_stay) == 4 ? 'selected' : '' }}>
-                                        {{ __('4 Days') }}
-                                    </option>
-                                    <option
-                                        value="5" {{ old('duration_stay', $client->duration_stay) == 5 ? 'selected' : '' }}>
-                                        {{ __('5 Days') }}
-                                    </option>
-                                    <option
-                                        value="6" {{ old('duration_stay', $client->duration_stay) == 6 ? 'selected' : '' }}>
-                                        {{ __('6 Days') }}
-                                    </option>
-                                    <option
-                                        value="7" {{ old('duration_stay', $client->duration_stay) == 7 ? 'selected' : '' }}>
-                                        {{ __('7 Days') }}
-                                    </option>
-                                    <option
-                                        value="8" {{ old('duration_stay', $client->duration_stay) == 8 ? 'selected' : '' }}>
-                                        {{ __('8 Days') }}
-                                    </option>
-                                    <option
-                                        value="9" {{ old('duration_stay', $client->duration_stay) == 9 ? 'selected' : '' }}>
-                                        {{ __('9 Days') }}
-                                    </option>
-                                    <option
-                                        value="10" {{ old('duration_stay', $client->duration_stay) == 10 ? 'selected' : '' }}>
-                                        {{ __('10 Days') }}
-                                    </option>
-                                    <option
-                                        value="11" {{ old('duration_stay', $client->duration_stay) == 11 ? 'selected' : '' }}>
-                                        {{ __('11 Days') }}
-                                    </option>
-                                    <option
-                                        value="12" {{ old('duration_stay', $client->duration_stay) == 12 ? 'selected' : '' }}>
-                                        {{ __('12 Days') }}
-                                    </option>
-                                    <option
-                                        value="13" {{ old('duration_stay', $client->duration_stay) == 13 ? 'selected' : '' }}>
-                                        {{ __('13 Days') }}
-                                    </option>
-                                    <option
-                                        value="14" {{ old('duration_stay', $client->duration_stay) == 14 ? 'selected' : '' }}>
-                                        {{ __('14 Days') }}
-                                    </option>
-                                    <option
-                                        value="15" {{ old('duration_stay', $client->duration_stay) == 15 ? 'selected' : '' }}>
-                                        {{ __('16 Days') }}
-                                    </option>
-                                    <option
-                                        value="30" {{ old('duration_stay', $client->duration_stay) == 30 ? 'selected' : '' }}>
-                                        {{ __('1 Month') }}
-                                    </option>
-                                    <option
-                                        value="60" {{ old('duration_stay', $client->duration_stay) == 60 ? 'selected' : '' }}>
-                                        {{ __('2 Months') }}
-                                    </option>
-                                    <option
-                                        value="90" {{ old('duration_stay', $client->duration_stay) == 90 ? 'selected' : '' }}>
-                                        {{ __('3 Months') }}
-                                    </option>
-                                    <option
-                                        value="99" {{ old('duration_stay', $client->duration_stay) == 99 ? 'selected' : '' }}>
-                                        {{ __('Unspecified') }}
-                                    </option>
-                                </select>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary pull-right">
@@ -655,31 +541,15 @@
                         <tr>
                             <th scope="row">{{ __('Phone(s)') }}</th>
                             <td>
-                                @if($client->created_at <= now()->subYear())
-                                    {{ str_pad(substr($client->client_number, -4), strlen($client->client_number), '*', STR_PAD_LEFT) }}
-                                @else
-                                    {{ $client->client_number }}
-                                    <a href="https://wa.me/{{$client->client_number}}" target="_blank"
-                                       class="btn btn-xs btn-outline-success float-right mr-2"><i
-                                            class="fa fa-whatsapp"></i></a>
-                                @endif
-                                <a href="javascript:void(0)"
-                                   class="btn btn-xs btn-outline-primary float-right"
-                                   wire:click="makeCall('ph1')"><i
-                                        class="fa fa-phone"></i></a>
+                                {{ $client->client_number }}
+                                <a href="https://wa.me/{{$client->client_number}}" target="_blank"
+                                   class="btn btn-xs btn-outline-success float-right mr-2"><i
+                                        class="fa fa-whatsapp"></i></a>
                                 <br>
-                                @if($client->created_at <= now()->subYear())
-                                    {{ str_pad(substr($client->client_number_2, -4), strlen($client->client_number_2), '*', STR_PAD_LEFT) }}
-                                @else
-                                    {{ $client->client_number_2 }}
-                                    <a href="https://wa.me/{{$client->client_number_2}}" target="_blank"
-                                       class="btn btn-xs btn-outline-success float-right mr-2"><i
-                                            class="fa fa-whatsapp"></i></a>
-                                @endif
-                                <a href="javascript:void(0)"
-                                   class="btn btn-xs btn-outline-primary float-right"
-                                   wire:click="makeCall('ph2')"><i
-                                        class="fa fa-phone"></i></a>
+                                {{ $client->client_number_2 }}
+                                <a href="https://wa.me/{{$client->client_number_2}}" target="_blank"
+                                   class="btn btn-xs btn-outline-success float-right mr-2"><i
+                                        class="fa fa-whatsapp"></i></a>
                             </td>
                         </tr>
                         <tr>
@@ -697,20 +567,22 @@
                         </tr>
                         <tr>
                             <th scope="row">{{ __('Country') }}</th>
-                            <td>
-                                @php
-                                    if (is_null($client->country)){
-                                        echo $client->getRawOriginal('country') ?? '';
-                                    } else  {
-                                        $cou = '';
-                                        $countries = collect($client->country)->toArray();
-                                    foreach( $countries as $name) {
-                                        $cou .=  '<span class="badge badge-dark">' .  $name . '</span>';
-                                    }
-                                        echo $cou;
-                                    }
-                                @endphp
-                            </td>
+                            @if(auth()->user()->can_sse_country)
+                                <td>
+                                    @php
+                                        if (is_null($client->country)){
+                                            echo $client->getRawOriginal('country') ?? '';
+                                        } else  {
+                                            $cou = '';
+                                            $countries = collect($client->country)->toArray();
+                                        foreach( $countries as $name) {
+                                            $cou .=  '<span class="badge badge-dark">' .  $name . '</span>';
+                                        }
+                                            echo $cou;
+                                        }
+                                    @endphp
+                                </td>
+                            @endif
                         </tr>
                         <tr>
                             <th scope="row">{{ __('Nationality') }}</th>
@@ -954,7 +826,9 @@
                         <tr>
                             <th scope="row">{{ __('Source') }}</th>
                             <td>
-                                {{ optional($client->source)->name }}
+                                @if(auth()->user()->can_sse_source)
+                                    {{ optional($client->source)->name }}
+                                @endif
                             </td>
                         </tr>
                         <tr>
@@ -964,9 +838,22 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">{{ __('Agency') }}</th>
+                            <th scope="row">{{ __('Flags') }}</th>
                             <td>
-                                {{ optional($client->agency)->name }}
+                                @php
+
+                                    $cou = '';
+                                    $requirements = collect($flags_edit)->toArray();
+                                    $flags = collect($flags)->toArray();
+                                    $newArr = array_filter($flags, function($var) use ($requirements){
+                                        return in_array($var['id'], $requirements);
+                                    });
+                                    foreach ($newArr as $val) {
+                                            $cou .= '<span class="badge badge-light-primary">' . $val['name'] . '</span><br>';
+                                    }
+                                    echo $cou;
+
+                                @endphp
                             </td>
                         </tr>
                         </tbody>

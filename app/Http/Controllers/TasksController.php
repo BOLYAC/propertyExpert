@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
@@ -41,8 +40,7 @@ class TasksController extends Controller
         if (\auth()->user()->hasRole('Admin')) {
             $users = User::all();
             $teams = Team::all();
-            $departments = Department::all();
-            return view('tasks.index', compact('users', 'departments', 'teams'));
+            return view('tasks.index', compact('users', 'teams'));
         } elseif (\auth()->user()->hasPermissionTo('team-manager')) {
             if (auth()->user()->ownedTeams()->count() > 0) {
                 $users = auth()->user()->currentTeam->allUsers();
@@ -66,13 +64,10 @@ class TasksController extends Controller
      */
     public function anyData(Request $request)
     {
-        $tasks = Task::with(['client', 'user', 'agency', 'lead'])->select(['id', 'date', 'client_id', 'body', 'agency_id', 'title', 'user_id', 'archive', 'source_type', 'source_id']);
+        $tasks = Task::with(['client', 'user', 'agency', 'lead'])->select(['id', 'date', 'client_id', 'agency_id', 'title', 'user_id', 'archive', 'source_type', 'source_id']);
 
         if ($request->get('user')) {
             $tasks->where('user_id', '=', $request->get('user'));
-        }
-        if ($request->get('department')) {
-            $tasks->where('department_id', '=', $request->get('department'));
         }
         if ($request->get('team')) {
             $tasks->where('team_id', '=', $request->get('team'));
@@ -128,27 +123,20 @@ class TasksController extends Controller
             ->addColumn('more_details', function ($tasks) {
                 return '<div class="d-inline-block align-middle">' .
                     '<div class="d-inline-block"><h6> ' . ($tasks->title ?? '') . ' </h6>' .
-                    '<span><strong>Body: </strong>' . optional($tasks)->body . '</span>' .
                     '<span class="ml-2 pl-2 f-w-600">Date: ' . optional($tasks->date)->format('d-m-Y') . '</span>' .
                     '</div></div>';
             })
             ->editColumn('client_id', function ($tasks) {
-                if ($tasks->source_type === 'App\Agency') {
-                    return '<a href="/agencies/' . $tasks->source_id . '">' . $tasks->agency->name ?? '' . '</a>';
-                } elseif ($tasks->source_type === 'App\Models\Lead') {
+                if ($tasks->source_type === 'App\Models\Lead') {
                     return '<a href="/leads/' . $tasks->source_id . '">' . $tasks->lead->lead_name ?? '' . '</a>';
-                } elseif ($tasks->source_type === 'App\Models\Company') {
-                    return '<a href="/companies/' . $tasks->source_id . '/edit">' . $tasks->taskable->name ?? '' . '</a>';
-                } else {
-                    return '<a href="/clients/' . $tasks->client_id . '">' . $tasks->client->full_name ?? '' . '</a>';
                 }
+
+                return '<a href="/clients/' . $tasks->client_id . '">' . $tasks->client->full_name ?? '' . '</a>';
             })
             ->addColumn('source_type', function ($tasks) {
                 $modelsMapping = [
-                    'App\Agency' => 'Agency',
                     'App\Models\Client' => 'Lead',
                     'App\Models\Lead' => 'Deal',
-                    'App\Models\Company' => 'Company'
                 ];
 
                 if (!array_key_exists($tasks->source_type, $modelsMapping)) {

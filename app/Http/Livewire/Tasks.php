@@ -14,7 +14,7 @@ use Livewire\Component;
 
 class Tasks extends Component
 {
-    public $tasks, $title, $date, $mode, $client, $updateMode, $type, $task_entry, $body, $contact_type;
+    public $tasks, $title, $date, $mode, $client, $updateMode, $type, $task_entry, $body, $contact_type, $task_priority;
 
     protected $rules = [
         'contact_type' => 'required',
@@ -68,6 +68,7 @@ class Tasks extends Component
         $this->date = '';
         $this->body = '';
         $this->contact_type = '';
+        $this->task_priority = '';
     }
 
     /**
@@ -85,6 +86,7 @@ class Tasks extends Component
         ];
 
         $i = $this->contact_type;
+
         switch ($i) {
             case 1:
                 $status = __('Call');
@@ -100,6 +102,20 @@ class Tasks extends Component
                 break;
         }
 
+        $p = $this->task_priority;
+
+        switch ($p) {
+            case 1:
+                $pre = __('High');
+                break;
+            case 2:
+                $pre = __('medium');
+                break;
+            case 3:
+                $pre = __('Low');
+                break;
+        }
+
         if (!array_key_exists($this->type, $modelsMapping)) {
             Session::flash('flash_message_warning', __('Could not create document, type not found! Please contact support'));
             throw new Exception("Could not create comment with type " . $this->type);
@@ -111,6 +127,8 @@ class Tasks extends Component
 
         $task = [
             'title' => $status,
+            'task_priority' => $this->task_priority,
+            'task_priority_name' => $pre,
             'date' => $this->date,
             'contact_type' => $this->contact_type,
             'user_id' => Auth::id(),

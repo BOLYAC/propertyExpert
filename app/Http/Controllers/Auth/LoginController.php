@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -36,5 +38,23 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    // Add mobile number to login
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required',
+            'mac_address' => 'required',
+        ]);
+
+        $credentials = $request->only('email', 'password', 'mac_address');
+        if (Auth::attempt($credentials)) {
+
+            return redirect()->route('home');
+        }
+
+        return redirect("login")->withSuccess('Oppes! You have entered invalid credentials');
     }
 }

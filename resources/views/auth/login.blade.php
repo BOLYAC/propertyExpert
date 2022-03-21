@@ -4,9 +4,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
-    <title>Hashim Group CRM | Login</title>
+    <link rel="icon" href="{{asset('assets/images/favicon.ico')}}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{asset('assets/images/favicon.ico')}}" type="image/x-icon">
+    <title>Property Expert Tr CRM | Login</title>
     <!-- Google font-->
     <!-- Bootstrap css-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/login/css/bootstrap.min.css') }}">
@@ -19,7 +19,7 @@
     <div class="website-logo">
         <a href="{{ route('home') }}">
             <div class="logo">
-                <img class="logo-size" src="{{ asset('assets/login/images/logo-light.svg') }}" alt="">
+                <img class="logo-size" src="{{ asset('assets/login/images/big-logo.png') }}" alt="">
             </div>
         </a>
     </div>
@@ -55,6 +55,7 @@
                                                     </span>
                             @enderror
                         </div>
+                        <input type="text" id="mac_address" name="mac_address" hidden value="">
                         <div>
                             <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}><label
                                 for="remember">{{ __('Remember Me!') }}</label>
@@ -62,10 +63,12 @@
                         <div class="form-button">
                             <button id="submit" type="submit" class="ibtn">{{ __('Login') }}</button>
                         </div>
+                        <p style="font-size: 12px" id="mac" onload="checkCookie()"></p>
                     </form>
-                    <h6 style="text-align:center;"><br/>{{ __('If you are facing any difficulty please contact your') }}
+                    <h6 style="text-align:center;">
+                        <br/>{{ __('If you are facing any difficulty please contact your') }}
                         <a
-                            href="https://wa.me/+905522926875">{{ __('system provider.') }}</a></h6>
+                            href="https://wa.me/+90314300720">{{ __('system provider.') }}</a></h6>
                 </div>
             </div>
         </div>
@@ -75,5 +78,22 @@
 <script src="{{ asset('assets/login/js/popper.min.js') }}"></script>
 <script src="{{ asset('assets/login/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/login/js/main.js') }}"></script>
+
+<script>
+    var navigator_info = window.navigator;
+    var screen_info = window.screen;
+    var uid = navigator_info.mimeTypes.length;
+    uid += navigator_info.userAgent.replace(/\D+/g, '');
+    uid += navigator_info.plugins.length;
+    uid += screen_info.height || '';
+    uid += screen_info.width || '';
+    uid += screen_info.pixelDepth || '';
+    console.log(uid);
+    document.write(uid);
+    $("#mac").html(uid);
+    $("#mac_address").val(uid);
+</script>
+
+@include('sweetalert::alert')
 </body>
 </html>

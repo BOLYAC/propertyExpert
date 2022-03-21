@@ -48,6 +48,7 @@ class Client extends Model implements Auditable, Documentable, Noteable, Taskabl
         'requirements_request' => 'array',
         'sellers' => 'array',
         'sells_names' => 'array',
+        'flags' => 'array'
     ];
 
 

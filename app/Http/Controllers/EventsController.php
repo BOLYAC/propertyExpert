@@ -251,7 +251,6 @@ class EventsController extends Controller
         $data['lead_lang'] = $lead->language ?? $lead->client->lang ?? '';
         $data['source_id'] = $lead->source_id;
         $data['source_name'] = $lead->source_name;
-        $data['agency_id'] = $lead->agency_id ?? '';
         $data['agency_name'] = $lead->agency_name ?? '';
         $data['status_id'] = $lead->status_id;
         $data['status_name'] = $lead->status_name;
@@ -262,7 +261,7 @@ class EventsController extends Controller
         $data['customer_passport_id'] = $lead->customer_passport_id;
         $data['customer_phone_number'] = $lead->customer_phone_number;
         $data['customer_name'] = $lead->customer_name;
-        $data['customer_name'] = $lead->customer_name;
+        $data['lead_flags'] = $lead->lead_flags;
 
         if ($request->has('share_with')) {
             $data['sell_rep'] = $users[0];

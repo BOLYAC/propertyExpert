@@ -12,6 +12,7 @@ use App\Models\Nationality;
 use App\Models\Source;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,8 +44,37 @@ class HomeController extends Controller
         $completedTasks = Task::with(['agency', 'client', 'lead'])->archive(true)->count();
         $events = Event::whereDate('event_date', Carbon::today())->count();
 
+        // For the graph
+        $from = now();
+        $to = now();
+
+        $from = \Carbon\Carbon::parse($from)
+            ->startOfDay()        // 2018-09-29 00:00:00.000000
+            ->toDateTimeString(); // 2018-09-29 00:00:00
+
+        $to = Carbon::parse($to)
+            ->endOfDay()          // 2018-09-29 23:59:59.000000
+            ->toDateTimeString(); // 2018-09-29 23:59:59
+
+
+        $users = User::withCount([
+            'tasks as tasks_made' => function (Builder $query) use ($from, $to) {
+                $query->whereBetween('created_at', [$from, $to]);
+            },
+            'tasks as tasks_done' => function (Builder $query) use ($from, $to) {
+                $query
+                    ->whereBetween('created_at', [$from, $to])
+                    ->where('archive', true);
+            },
+            'notes as notes_made' => function (Builder $query) use ($from, $to) {
+                $query
+                    ->whereBetween('created_at', [$from, $to]);
+            },
+        ])->limit('10')->get();
+
+
         return view('dashboard.index',
-            compact('todayTasks', 'olderTask', 'events', 'completedTasks', 'tomorrowTasks', 'allClients')
+            compact('todayTasks', 'olderTask', 'events', 'completedTasks', 'tomorrowTasks', 'allClients', 'users')
         );
     }
 

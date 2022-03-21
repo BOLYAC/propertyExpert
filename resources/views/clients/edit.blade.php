@@ -294,6 +294,10 @@
             data: budgetData,
             theme: 'classic',
         })
+        $('.js-flags-all').select2({
+            theme: 'classic',
+        })
+
 
         $(function () {
             $(".js-rooms-all").select2({
@@ -305,6 +309,10 @@
             $(".js-budgets-all").select2({
                 theme: 'classic'
             }).val({!! json_encode($client->budget_request) !!}).trigger('change.select2');
+            $(".js-flags-all").select2({
+                theme: 'classic'
+            }).val({!! json_encode($client->flags) !!}).trigger('change.select2');
+
         });
 
         $('.js-country-all').select2({
@@ -458,16 +466,16 @@
                                                             for="client_number_2">{{ __('Phone number Format (+90xxxxxxxxx)') }}</label>
                                                     </div>
                                                     <div class="col-2">
-                                                        <a href="javascript:void(0)"
-                                                           class="btn btn-xs btn-outline-primary float-right theme-setting ph1"><i
-                                                                class="fa fa-phone"></i></a>
+                                                        <a href="https://wa.me/{{$client->client_number}}"
+                                                           target="_blank"
+                                                           class="btn btn-xs btn-outline-primary float-right theme-setting"><i
+                                                                class="fa fa-whatsapp"></i></a>
                                                     </div>
                                                 </div>
                                                 <input type="text" name="client_number"
                                                        id="client_number"
                                                        class="form-control form-control-sm @error('client_number') form-control-danger @enderror"
                                                        value="{{ old('client_number', $client->client_number) }}"
-                                                       pattern="[+ 0-9]{12}"
                                                        @if($client->client_number) @can('cant-update-field') readonly @endcan
                                                     @endif
                                                 >
@@ -486,14 +494,14 @@
                                                             for="client_number_2">{{ __('Phone number 2 Format (+90xxxxxxxxx)') }}</label>
                                                     </div>
                                                     <div class="col-2">
-                                                        <a href="javascript:void(0)"
+                                                        <a href="https://wa.me/{{$client->client_number_2}}"
+                                                           target="_blank"
                                                            class="btn btn-xs btn-outline-primary float-right theme-setting ph2"><i
-                                                                class="fa fa-phone"></i></a>
+                                                                class="fa fa-whatsapp"></i></a>
                                                     </div>
                                                 </div>
                                                 <input type="text" name="client_number_2"
                                                        id="client_number_2"
-                                                       pattern="[+ 0-9]{12}"
                                                        class="form-control form-control-sm @error('client_number_2') form-control-danger @enderror"
                                                        value="{{ old('client_number_2', $client->client_number_2) }}"
                                                        @if($client->client_number_2) @can('cant-update-field') readonly @endcan
@@ -556,10 +564,6 @@
                                                     {{ $lang }}</option>
                                             @endforeach
                                         </select>
-                                        @if(is_null($client->country))
-                                            <div class="col-form-label">
-                                                Old: {{ $client->getRawOriginal('country') ?? '' }}</div>
-                                        @endif
                                     </div>
                                     <div class="form-group input-group-sm">
                                         <label for="nationality">{{ __('Nationality') }}</label>
@@ -574,10 +578,6 @@
                                                     {{ $nat }}</option>
                                             @endforeach
                                         </select>
-                                        @if(is_null($client->country))
-                                            <div class="col-form-label">
-                                                Old: {{ $client->getRawOriginal('nationality') ?? '' }}</div>
-                                        @endif
                                     </div>
                                     <div class="form-group input-group-sm">
                                         <label for="lang">{{ __('Languages') }}</label>
@@ -722,145 +722,50 @@
                                                 multiple>
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="source">{{ __('Source') }}</label>
-                                        <select name="source_id" id="source"
-                                                class="form-control form-control-sm @error('source_id') form-control-danger @enderror">
-                                            <option selected disabled> {{ __('-- Select source --') }}
-                                            </option>
-                                            @foreach($sources as $source)
-                                                <option value="{{ $source->id }}"
-                                                    {{ $client->source_id == $source->id ? 'selected' : '' }}>
-                                                    {{ $source->name }}</option>
+                                    <div class="form-group input-group-sm">
+                                        <label for="lang">{{ __('Flags') }}</label>
+                                        <select class="js-flags-all custom-select custom-select-sm"
+                                                multiple="multiple" name="flags[]" id="flags">
+                                            @php $clientFlags = collect($client->flags)->toArray() @endphp
+                                            @foreach($flags as $flag)
+                                                @if( in_array($client->flags, $clientFlags))
+                                                    <option value="{{ $flag->id }}"
+                                                            selected>{{ $flag->name }}</option>
+                                                @else
+                                                    <option value="{{ $flag->id }}">{{ $flag->name }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
-                                        @error('source_id')
-                                        <span class="invalid-feedback" role="alert">
-                                                    <strong class="text-danger">{{ $message }}</strong>
-                                                </span>
-                                        @enderror
                                     </div>
                                     <div class="row">
+                                        <div class="form-group col-md-12 col-lg-6">
+                                            <label for="source">{{ __('Source') }}</label>
+                                            <select name="source_id" id="source"
+                                                    class="form-control form-control-sm @error('source_id') form-control-danger @enderror">
+                                                <option selected disabled> {{ __('-- Select source --') }}
+                                                </option>
+                                                @foreach($sources as $source)
+                                                    <option value="{{ $source->id }}"
+                                                        {{ $client->source_id == $source->id ? 'selected' : '' }}>
+                                                        {{ $source->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('source_id')
+                                            <span class="invalid-feedback" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+
                                         <div class="form-group col-md-12 col-lg-6">
                                             <label for="">{{ __('Campaign name') }}</label>
                                             <input type="text" class="form-control form-control-sm"
                                                    value="{{ $client->campaigne_name }}">
                                         </div>
 
-                                        <div class="form-group col-md-12 col-lg-6">
-                                            <label for="source">{{ __('Agency') }}</label>
-                                            <select name="agency_id" id="agency"
-                                                    class="form-control form-control-sm @error('agency_id') form-control-danger @enderror">
-                                                <option value="" selected
-                                                        disabled> {{ __('-- Select agency --') }}
-                                                </option>
-                                                @foreach($agencies as $agency)
-                                                    <option value="{{ $agency->id }}"
-                                                        {{ $client->agency_id == $agency->id ? 'selected' : '' }}>
-                                                        {{ $agency->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('agency_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                            @enderror
-                                        </div>
+
                                     </div>
-                                    <div class="row">
-                                        <div class="form-group col-md">
-                                            <label for="appointment_date">{{ __('Date of coming') }}</label>
-                                            <input name="appointment_date" id="appointment_date"
-                                                   class="form-control form-control-sm"
-                                                   value="{{ old('appointment_date', optional($client->appointment_date)->format('Y-m-d') ) }}"
-                                                   type="date"/>
-                                        </div>
-                                        <div class="form-group col-md">
-                                            <label for="duration_stay">{{ __('Duration of Stay')}}</label>
-                                            <select name="duration_stay" id="duration_stay"
-                                                    class="form-control form-control-sm">
-                                                <option value=""
-                                                        selected>{{ __('-- Select duration of Stay --') }}</option>
-                                                <option
-                                                    value="1" {{ old('duration_stay', $client->duration_stay) == 1 ? 'selected' : '' }}>
-                                                    {{ __('1 Day') }}
-                                                </option>
-                                                <option
-                                                    value="2" {{ old('duration_stay', $client->duration_stay) == 2 ? 'selected' : '' }}>
-                                                    {{ __('2 Days') }}
-                                                </option>
-                                                <option
-                                                    value="3" {{ old('duration_stay', $client->duration_stay) == 3 ? 'selected' : '' }}>
-                                                    {{ __('3 Days') }}
-                                                </option>
-                                                <option
-                                                    value="4" {{ old('duration_stay', $client->duration_stay) == 4 ? 'selected' : '' }}>
-                                                    {{ __('4 Days') }}
-                                                </option>
-                                                <option
-                                                    value="5" {{ old('duration_stay', $client->duration_stay) == 5 ? 'selected' : '' }}>
-                                                    {{ __('5 Days') }}
-                                                </option>
-                                                <option
-                                                    value="6" {{ old('duration_stay', $client->duration_stay) == 6 ? 'selected' : '' }}>
-                                                    {{ __('6 Days') }}
-                                                </option>
-                                                <option
-                                                    value="7" {{ old('duration_stay', $client->duration_stay) == 7 ? 'selected' : '' }}>
-                                                    {{ __('7 Days') }}
-                                                </option>
-                                                <option
-                                                    value="8" {{ old('duration_stay', $client->duration_stay) == 8 ? 'selected' : '' }}>
-                                                    {{ __('8 Days') }}
-                                                </option>
-                                                <option
-                                                    value="9" {{ old('duration_stay', $client->duration_stay) == 9 ? 'selected' : '' }}>
-                                                    {{ __('9 Days') }}
-                                                </option>
-                                                <option
-                                                    value="10" {{ old('duration_stay', $client->duration_stay) == 10 ? 'selected' : '' }}>
-                                                    {{ __('10 Days') }}
-                                                </option>
-                                                <option
-                                                    value="11" {{ old('duration_stay', $client->duration_stay) == 11 ? 'selected' : '' }}>
-                                                    {{ __('11 Days') }}
-                                                </option>
-                                                <option
-                                                    value="12" {{ old('duration_stay', $client->duration_stay) == 12 ? 'selected' : '' }}>
-                                                    {{ __('12 Days') }}
-                                                </option>
-                                                <option
-                                                    value="13" {{ old('duration_stay', $client->duration_stay) == 13 ? 'selected' : '' }}>
-                                                    {{ __('13 Days') }}
-                                                </option>
-                                                <option
-                                                    value="14" {{ old('duration_stay', $client->duration_stay) == 14 ? 'selected' : '' }}>
-                                                    {{ __('14 Days') }}
-                                                </option>
-                                                <option
-                                                    value="15" {{ old('duration_stay', $client->duration_stay) == 15 ? 'selected' : '' }}>
-                                                    {{ __('16 Days') }}
-                                                </option>
-                                                <option
-                                                    value="30" {{ old('duration_stay', $client->duration_stay) == 30 ? 'selected' : '' }}>
-                                                    {{ __('1 Month') }}
-                                                </option>
-                                                <option
-                                                    value="60" {{ old('duration_stay', $client->duration_stay) == 60 ? 'selected' : '' }}>
-                                                    {{ __('2 Months') }}
-                                                </option>
-                                                <option
-                                                    value="90" {{ old('duration_stay', $client->duration_stay) == 90 ? 'selected' : '' }}>
-                                                    {{ __('3 Months') }}
-                                                </option>
-                                                <option
-                                                    value="99" {{ old('duration_stay', $client->duration_stay) == 99 ? 'selected' : '' }}>
-                                                    {{ __('Unspecified') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
                             <div class="form-group">

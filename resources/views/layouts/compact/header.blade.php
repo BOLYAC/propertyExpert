@@ -1,8 +1,9 @@
 <div class="page-main-header">
     <div class="main-header-right">
         <div class="main-header-left">
-            <div class="logo-wrapper"><a href="{{route('home')}}"><img src="{{asset('assets/images/logo/logo-main.png')}}"
-                                                                       alt=""></a></div>
+            <div class="logo-wrapper"><a href="{{route('home')}}"><img
+                        src="{{asset('assets/images/logo/logo-main.png')}}"
+                        alt=""></a></div>
         </div>
         <div class="mobile-sidebar">
             <div class="media-body text-right switch-sm">
@@ -21,11 +22,17 @@
                     </form>
                     <span class="mobile-search"><i data-feather="search"></i></span>
                 </li>
-                @if(auth()->user()->department_id !== 2)
-                    <li class="theme-setting"><i data-feather="phone-call"></i></li>
-                @endif
-                <li><a class="text-dark" href="javascript:void(0)" onclick="javascript:toggleFullScreen()"><i
-                            data-feather="maximize"></i></a></li>
+
+                <li>
+                    <a class="text-dark" href="{{route('home-2')}}"><i
+                            data-feather="plus"></i>
+                    </a>
+                </li>
+                <li>
+                    <a class="text-dark" href="javascript:void(0)" onclick="javascript:toggleFullScreen()"><i
+                            data-feather="maximize"></i>
+                    </a>
+                </li>
                 <li class="onhover-dropdown px-0"><span class="media user-header"><img
                             class="mr-2 rounded-circle img-35"
                             style="width: 35px;height:35px;"

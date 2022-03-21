@@ -248,12 +248,6 @@
                             {{ optional($client)->campaigne_name }}
                         </td>
                     </tr>
-                    <tr>
-                        <th scope="row">{{ __('Agency') }}</th>
-                        <td>
-                            {{ $client->agency_name ?? '' }}
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
