@@ -1,7 +1,7 @@
 <div class="page-main-header">
     <div class="main-header-right">
         <div class="main-header-left">
-            <div class="logo-wrapper"><a href="{{route('home')}}">
+            <div class="logo-wrapper"><a href="https://propertyexperts-tr.com" target="_blank">
                     <img src="{{asset('assets/images/logo/hp.png')}}" alt=""></a>
             </div>
         </div>

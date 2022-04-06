@@ -215,6 +215,113 @@
             </div>
         </div>
 
+        <div class="col-xl-12 xl-100 box-col-12 row">
+            <div class="col-xl-3 xl-40 box-col-5">
+                <a href="{{ route('clients.index') }}">
+                    <div class="card card-with-border bg-primary o-hidden">
+                        <div class="birthday-bg"></div>
+                        <div class="card-body">
+                            <h4><i data-feather="anchor"></i> Leads</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-xl-3 xl-40 box-col-5">
+                <a href="{{ route('tasks.index') }}">
+                    <div class="card card-with-border bg-primary o-hidden">
+                        <div class="birthday-bg"></div>
+                        <div class="card-body">
+                            <h4><i data-feather="check-square"></i> Tasks</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-xl-3 xl-40 box-col-5">
+                <a href="{{ route('events.index') }}">
+                    <div class="card card-with-border bg-primary o-hidden">
+                        <div class="birthday-bg"></div>
+                        <div class="card-body">
+                            <h4><i data-feather="calendar"></i> Calender</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-xl-3 xl-40 box-col-5">
+                <a href="{{ route('leads.index') }}">
+                    <div class="card card-with-border bg-primary o-hidden">
+                        <div class="birthday-bg"></div>
+                        <div class="card-body">
+                            <h4><i data-feather="tag"></i> Deals</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Cod Box Copy begin -->
+        <div class="col-xl-12 xl-100 box-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <form method="post" id="search-form" role="form">
+                        @csrf
+                        <div class="row">
+                            <div class="col mr-1 mr-1">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label" for="example-daterange1">Performance</label>
+                                    <div class="col-md-7">
+                                        <div class="input-daterange input-group"
+                                             data-date-format="yyyy-mm-dd"
+                                             data-week-start="1" data-autoclose="true"
+                                             data-today-highlight="true">
+                                            <input type="date" class="form-control"
+                                                   id="example-daterange1"
+                                                   name="from_date" placeholder="From"
+                                                   data-week-start="1"
+                                                   data-autoclose="true" data-today-highlight="true">
+                                            <div class="input-group-prepend input-group-append">
+                                                <span class="input-group-text font-w600">to</span>
+                                            </div>
+                                            <input type="date" class="form-control"
+                                                   id="example-daterange2"
+                                                   name="to_date" placeholder="To"
+                                                   data-week-start="1"
+                                                   data-autoclose="true" data-today-highlight="true">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2 pl-1 ml-1">
+                                <div class="btn-group " role="group">
+                                    <button type="submit" name="filter" id="filter"
+                                            class="btn btn-success btn-sm">
+                                        {{ __('Filter') }}
+                                    </button>
+                                    <button type="button" name="refresh" id="refresh"
+                                            class="btn btn-dark btn-sm">
+                                        {{ __('Refresh') }} </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <div class="dt-ext table-responsive product-table">
+                        <table id="basic-1"
+                               class="table table-striped display table-bordered nowrap">
+                            <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Tasks made</th>
+                                <th scope="col">Task done</th>
+                                <th scope="col">Notes</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Cod Box Copy end -->
         <div class="col-xl-12 xl-100">
@@ -357,68 +464,6 @@
                 </div>
             </div>
         </div>
-        <!-- Cod Box Copy begin -->
-        <div class="col-xl-6 xl-100 box-col-12">
-            <div class="card">
-                <div class="card-header">
-                    <form method="post" id="search-form" role="form">
-                        @csrf
-                        <div class="row">
-                            <div class="col mr-1 mr-1">
-                                <div class="form-group row">
-                                    <label class="col-md-3 col-form-label" for="example-daterange1">Performance</label>
-                                    <div class="col-md-7">
-                                        <div class="input-daterange input-group"
-                                             data-date-format="yyyy-mm-dd"
-                                             data-week-start="1" data-autoclose="true"
-                                             data-today-highlight="true">
-                                            <input type="date" class="form-control"
-                                                   id="example-daterange1"
-                                                   name="from_date" placeholder="From"
-                                                   data-week-start="1"
-                                                   data-autoclose="true" data-today-highlight="true">
-                                            <div class="input-group-prepend input-group-append">
-                                                <span class="input-group-text font-w600">to</span>
-                                            </div>
-                                            <input type="date" class="form-control"
-                                                   id="example-daterange2"
-                                                   name="to_date" placeholder="To"
-                                                   data-week-start="1"
-                                                   data-autoclose="true" data-today-highlight="true">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-2 pl-1 ml-1">
-                                <div class="btn-group " role="group">
-                                    <button type="submit" name="filter" id="filter"
-                                            class="btn btn-success btn-sm">
-                                        {{ __('Filter') }}
-                                    </button>
-                                    <button type="button" name="refresh" id="refresh"
-                                            class="btn btn-dark btn-sm">
-                                        {{ __('Refresh') }} </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="card-body">
-                    <div class="dt-ext table-responsive product-table">
-                        <table id="basic-1"
-                               class="table table-striped display table-bordered nowrap">
-                            <thead>
-                            <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Tasks made</th>
-                                <th scope="col">Task done</th>
-                                <th scope="col">Notes</th>
-                            </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 @endsection

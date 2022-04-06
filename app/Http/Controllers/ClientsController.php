@@ -60,12 +60,13 @@ class ClientsController extends Controller
     {
         $sources = Source::where('for_company', false)->get();
         $agencies = Agency::all();
+        $flags = Tag::all();
 
         if (\auth()->user()->hasRole('Admin')) {
             $users = User::all();
             $teams = Team::all();
             $departments = Department::all();
-            return view('clients.index', compact('users', 'sources', 'agencies', 'departments', 'teams'));
+            return view('clients.index', compact('users', 'sources', 'agencies', 'departments', 'teams', 'flags'));
         } elseif (\auth()->user()->hasPermissionTo('team-manager')) {
             if (auth()->user()->ownedTeams()->count() > 0) {
                 $teams = auth()->user()->ownedTeams;
@@ -76,39 +77,11 @@ class ClientsController extends Controller
                     }
                 }
             }
-            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
-        } elseif (\auth()->user()->hasPermissionTo('desk-manager')) {
-            $teams = Team::whereIn('id', ['4', '7', '15']);
-            foreach ($teams as $u) {
-                foreach ($u->users as $ut) {
-                    $users[] = $ut->id;
-                }
-            }
-            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
-        } elseif (\auth()->user()->hasPermissionTo('desk-user')) {
-            $teams = Team::whereIn('id', ['3', '4', '7', '15'])->get();
-            foreach ($teams as $u) {
-                foreach ($u->users as $ut) {
-                    $users[] = $ut;
-                }
-            }
-            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
-        } elseif (\auth()->user()->hasPermissionTo('multiple-department')) {
-            $teams = Team::whereIn('id', ['5', '4', '7', '15']);
-            foreach ($teams as $u) {
-                foreach ($u->users as $ut) {
-                    $users[] = $ut->id;
-                }
-            }
-            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
-        } elseif (\auth()->user()->hasRole('Call center HP')) {
-            $teams = auth()->user()->ownedTeams;
-            $users = User::with(['roles', 'teams'])->whereIn('current_team_id', $teams)->get();
-            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
+            return view('clients.index', compact('users', 'sources', 'agencies', 'teams', 'flags'));
         } else {
             $users = User::all();
             $teams = Team::all();
-            return view('clients.index', compact('users', 'sources', 'agencies', 'teams'));
+            return view('clients.index', compact('users', 'sources', 'agencies', 'teams', 'flags'));
         }
     }
 
@@ -667,7 +640,7 @@ class ClientsController extends Controller
             $import = new ClientsImport($user, $source, $team);
 
             $import->import($file);
-
+            $request->dd();
 
             if ($import->failures()->isNotEmpty()) {
                 return back()->withFailures($import->failures());
@@ -693,11 +666,15 @@ class ClientsController extends Controller
         );
 
         if ($request->hasFile('file')) {
-            $user = User::findOrFail($request->get('user_id'));
-            $source = $request->get('source_id');
-            $team = $user->current_team_id;
             $file = $request->file('file');
-            \Excel::import(new LeadsImport, $file);
+//            $headings = (new HeadingRowImport)->toArray($file);
+//            dd($headings);
+            $import = new LeadsImport();
+            $import->import($file);
+
+            if ($import->failures()->isNotEmpty()) {
+                return back()->withFailures($import->failures());
+            }
             //$import = new AgenciesImport($user, $source, $team);
             /*$headings = (new HeadingRowImport)->toArray($file);
             dd($headings);*/
@@ -708,6 +685,7 @@ class ClientsController extends Controller
             /*if ($import->failures()->isNotEmpty()) {
                 return back()->withFailures($import->failures());
             }*/
+
 
             return redirect()->route('clients.index')->with('toast_success', __('File upload successfully'));
         }
@@ -1027,6 +1005,9 @@ class ClientsController extends Controller
     public function newLeadList(Request $request)
     {
         $clients = Client::with(['source', 'user', 'tasks', 'agency']);
+        $flagsSource = Tag::select('id', 'name')->get();
+
+        $request->dd();
 
         if ($request->get('status')) {
             $clients->whereIn('status', $request->get('status'));
@@ -1038,6 +1019,9 @@ class ClientsController extends Controller
 
         if ($request->get('source')) {
             $clients->whereIn('source_id', $request->get('source'));
+        }
+        if ($request->get('flags')) {
+            $clients->whereJsonContains('flags', $request->get('flags'));
         }
         if ($request->get('priority')) {
             $clients->whereIn('priority', $request->get('priority'));
@@ -1166,11 +1150,12 @@ class ClientsController extends Controller
         return Datatables::of($clients)
             ->setRowId('id')
             ->addColumn('check', '<input type="checkbox" class="checkbox-circle check-task" name="selected_clients[]" value="{{ $id }}">')
-            ->addColumn('details', function ($clients) {
+            ->addColumn('details', function ($clients) use ($flagsSource) {
                 $country = '';
                 $priority = '';
                 $status = '';
                 $status_new = '';
+                $flags = '';
                 if (\auth()->user()->can_sse_country == true) {
                     if (is_null($clients->country)) {
                         $country = '<span class="badge badge-pill badge-primary">' . $clients->getRawOriginal('country') ?? '' . '</span>';
@@ -1180,6 +1165,16 @@ class ClientsController extends Controller
                             $country .= '<span class="badge badge-pill badge-primary">' . $name . '</span>';
                         }
                         $country;
+                    }
+                }
+                if (!is_null($clients->flags)) {
+                    $clientFlags = collect($clients->flags)->toArray();
+                    $flagsSource = collect($flagsSource)->toArray();
+                    $newArr = array_filter($flagsSource, function ($var) use ($clientFlags) {
+                        return in_array($var['id'], $clientFlags);
+                    });
+                    foreach ($newArr as $val) {
+                        $flags .= '<span class="badge badge-light-info">' . $val['name'] . '</span><br>';
                     }
                 }
                 $i = $clients->status;
@@ -1296,7 +1291,7 @@ class ClientsController extends Controller
 
                 return '<div class="d-inline-block align-middle">' .
                     '<div class="d-inline-block"><h6><a href="' . route('clients.show', $clients->id) . '">' . ($clients->complete_name ?? $clients->full_name) . '</a></h6>' .
-                    '<span class="f-w-600">Source: </span><span class="mr-2">' . optional($clients->source)->name . '</span>' . $status . $status_new . $priority . $country .
+                    '<span class="f-w-600">Source: </span><span class="mr-2">' . optional($clients->source)->name . '</span>' . $status . $status_new . $priority . $country . $flags .
                     '</div></div>';
             })
             ->addColumn('more_details', function ($clients) {

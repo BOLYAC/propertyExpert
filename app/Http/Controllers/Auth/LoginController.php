@@ -46,10 +46,9 @@ class LoginController extends Controller
         $request->validate([
             'email' => 'required',
             'password' => 'required',
-            'mac_address' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password', 'mac_address');
+        $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
 
             return redirect()->route('home');

@@ -5,6 +5,7 @@
     <!-- Notification.css -->
     <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable-extension.css') }}">
+
     <!-- Plugins css start-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}">
     <style>
@@ -64,12 +65,41 @@
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.colReorder.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables/datatable-extension/dataTables.rowReorder.min.js')}}"></script>
 
+    <!-- Notify -->
+    <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <!-- Plugins JS start-->
     <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
     <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
 
     <script>
         $(document).ready(function () {
+            function notify(title, type) {
+                $.notify({
+                        title: title
+                    },
+                    {
+                        type: type,
+                        allow_dismiss: true,
+                        newest_on_top: true,
+                        mouse_over: true,
+                        spacing: 10,
+                        timer: 2000,
+                        placement: {
+                            from: 'top',
+                            align: 'right'
+                        },
+                        offset: {
+                            x: 30,
+                            y: 30
+                        },
+                        delay: 1000,
+                        z_index: 10000,
+                        animate: {
+                            enter: 'animated bounce',
+                            exit: 'animated bounce'
+                        }
+                    });
+            }
             function get_filter(class_name) {
                 let filter = [];
                 $('.' + class_name + ':checked').each(function () {
@@ -116,15 +146,40 @@
                 table.draw();
             });
             @can('lead-delete')
-            table.on('click', '.delete', function () {
-                $tr = $(this).closest('tr');
+            table.on('click', '.delete', function (e) {
+                e.preventDefault();
+                let $tr = $(this).closest('tr');
                 if ($($tr).hasClass('child')) {
                     $tr = $tr.prev('.parent');
                 }
-                let data = table.row($tr).data();
-                $('#deleteForm').attr('action', 'leads/' + data[0]);
+                let data = table.row($tr).id()
+                $('#lead_id_delete').val(data);
                 $('#deleteModal').modal('show');
-            })
+            });
+            @endcan
+            @can('lead-delete')
+            $('#deleteForm').on('submit', function (e) {
+                e.preventDefault();
+                let client_id = $('#lead_id_delete').val();
+                $.ajax({
+                    url: "/leads/singleDelete/" + client_id,
+                    type: "DELETE",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                    },
+                    success: function (response) {
+                        table.ajax.reload(null, false);
+                        $('#deleteModal').modal('hide');
+                        $('#lead_id_delete').val('');
+                        notify('Deal deleted', 'success', 'fa fa-check mr-5');
+                    },
+                    error: function (response) {
+                        $('#lead_id_delete').val('');
+                        $('#deleteModal').modal('hide');
+                        notify(response, 'danger', 'fa fa-times mr-5');
+                    }
+                });
+            });
             @endcan
         });
     </script>
@@ -272,6 +327,7 @@
                     <div class="modal-body p-b-0">
                         <p>{{ __('Are sur you want to delete this deal?') }}</p>
                     </div>
+                    <input type="hidden" id="lead_id_delete">
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">{{ __('Delete') }} <i class="ti-trash-alt"></i>
                         </button>

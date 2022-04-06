@@ -113,6 +113,7 @@
                 data: function (d) {
                     d.status = $('select[name=status_filter]').val();
                     d.source = $('select[name=source_filter]').val();
+                    d.flags = $('select[name=client_flags_filter]').val();
                     d.priority = $('select[name=priority_filter]').val();
                     d.country_check = $('#country_check').is(':checked');
                     d.country_type = $('select[name=country_type]').val();
@@ -142,6 +143,7 @@
         $('#refresh').click(function () {
             $('select[name=status_filter]').val('');
             $('select[name=source_filter]').val('');
+            $('select[name=client_flags_filter]').val('');
             $('select[name=priority_filter]').val('');
             $('#country_check').prop('checked', false);
             $('input[name=country_field]').val('');
@@ -393,26 +395,19 @@
                                 </select>
                             </div>
                             <div class="form-group mb-2">
-                                <div class="col-form-label">{{ __('Lost reason') }}</div>
-                                <select class="js-example-placeholder-multiple col-sm-12" id="status_new_filter"
-                                        name="status_new_filter" multiple="multiple">
-                                    <option value="1">{{ __('lost to competition') }}</option>
-                                    <option value="2">{{ __('Applied by mistake') }}</option>
-                                    <option value="3">{{ __('Budget was not enough') }}</option>
-                                    <option value="4">{{ __('Client was looking for something else') }}</option>
-                                    <option value="5">{{ __('Decided not to buy in Turkey') }}</option>
-                                    <option value="6">{{ __('Wrong contact details') }}</option>
-                                    <option value="7">{{ __('Unqualified') }}</option>
-                                    <option value="8">{{ __('Unreachable') }}</option>
-                                    <option value="9">{{ __('Postponed buying idea') }}</option>
-                                    <option value="10">{{ __('Different language') }}</option>
-                                </select>
-                            </div>
-                            <div class="form-group mb-2">
                                 <div>{{ __('Source') }}</div>
                                 <select class="js-example-placeholder-multiple col-sm-12" id="source_filter"
                                         name="source_filter" multiple>
                                     @foreach($sources as $row)
+                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group mb-2">
+                                <div>{{ __('Flags') }}</div>
+                                <select class="js-example-placeholder-multiple col-sm-12" id="client_flags_filter"
+                                        name="client_flags_filter" multiple>
+                                    @foreach($flags as $row)
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
                                     @endforeach
                                 </select>

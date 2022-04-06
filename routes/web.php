@@ -25,6 +25,7 @@ Route::group(['prefix' => 'clients', 'middleware' => ['auth']], function () {
     Route::delete('/singleDelete/{id}', 'ClientsController@singleDelete')->name('clients.singleDelete');
     Route::delete('/mass-lead-delete', 'ClientsController@massDelete')->name('clients.massDelete');
     Route::post('/share-client-with', 'SalesController@shareClient')->name('client.shareClient');
+    Route::post('/share-client-with', 'SalesController@shareClient')->name('client.shareClient');
     Route::post('/mass-share-client-with', 'SalesController@massShareClient')->name('client.massShareClient');
 });
 Route::group(
@@ -50,6 +51,7 @@ Route::group(
         Route::resource('payments', 'PaymentController');
         // Deals
         Route::post('/covert-to-order/{lead}', 'LeadsController@convertToOrder')->name('lead.convert.order');
+        Route::delete('leads/singleDelete/{id}', 'LeadsController@singleDelete')->name('lead.singleDelete');
         Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
         Route::get('calendar-event', [CalenderController::class, 'index'])->name('calender.index');
         Route::get('calendar-crud-ajax', [CalenderController::class, 'calendarEvents']);

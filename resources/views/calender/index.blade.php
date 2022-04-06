@@ -84,10 +84,10 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-xl-6 xl-40 col-lg-12 col-md-5 box-col-4">
+                                <div class="col-xl-7 xl-40 col-lg-12 col-md-7 box-col-4">
                                     <div id='full_calendar_events'></div>
                                 </div>
-                                <div class="col-xl-6 xl-60 col-lg-12 col-md-7 box-col-8" id="event-detail">
+                                <div class="col-xl-5 xl-60 col-lg-12 col-md-5 box-col-8" id="event-detail">
 
                                 </div>
                             </div>

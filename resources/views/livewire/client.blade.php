@@ -841,7 +841,6 @@
                             <th scope="row">{{ __('Flags') }}</th>
                             <td>
                                 @php
-
                                     $cou = '';
                                     $requirements = collect($flags_edit)->toArray();
                                     $flags = collect($flags)->toArray();
@@ -852,7 +851,6 @@
                                             $cou .= '<span class="badge badge-light-primary">' . $val['name'] . '</span><br>';
                                     }
                                     echo $cou;
-
                                 @endphp
                             </td>
                         </tr>

@@ -110,7 +110,7 @@
             </div>
         </div>
 
-        <div class="row col-8 col-auto">
+        <div class="col-xl-12 xl-100 box-col-12 row">
             <div class="col-xl-3 xl-40 box-col-5">
                 <a href="{{ route('clients.index') }}">
                     <div class="card card-with-border bg-primary o-hidden">
@@ -153,7 +153,7 @@
             </div>
         </div>
 
-        <div class="col-xl-6 xl-100 box-col-12">
+        <div class="col-xl-12 xl-100 box-col-12">
             <div class="card">
                 <div class="card-header">
                     <form method="post" id="search-form" role="form">

@@ -25,7 +25,6 @@ class ClientsImport implements
     WithValidation,
     SkipsOnError,
     SkipsOnFailure
-
 {
     use Importable, SkipsErrors, SkipsFailures;
 

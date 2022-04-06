@@ -240,11 +240,14 @@ class LeadsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Lead $lead
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Lead $lead): \Illuminate\Http\RedirectResponse
+    public function destroy(Request $request): \Illuminate\Http\RedirectResponse
     {
+        $request->dd();
+        $lead = Lead::findOrfail();
+
         $lead->delete();
 
         return redirect()->route('leads.index')->with('toast_danger', 'Deal deleted successfully.');
@@ -459,5 +462,18 @@ class LeadsController extends Controller
         $pdf = PDF::loadView('leads.preview', compact('deals', 'val'));
         $pdf->setPaper('Tabloid', 'landscape');
         return $pdf->stream('crm_hashim_group_crm.pdf');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public
+    function singleDelete($id): \Illuminate\Http\JsonResponse
+    {
+        Lead::find($id)->delete($id);
+        return response()->json("ok");
     }
 }

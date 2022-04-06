@@ -136,7 +136,7 @@ class HomeController extends Controller
                     $i = $clients->status;
                     switch ($i) {
                         case 1:
-                            return '<span class="badge badge-primary">' . __('new Lead') . '</span>';
+                            return '<span class="badge badge-primary blob">' . __('new Lead') . '</span>';
                             break;
                         case 8:
                             return '<span class="badge badge-primary"> ' . __('No Answer') . '</span>';
